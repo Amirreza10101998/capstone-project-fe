@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 interface NavItem {
     label: string;
@@ -32,12 +33,16 @@ const Navbar: React.FC = () => {
                                 {item.label}
                             </a>
                         ))}
-                        <button className="bg-gray-800 text-white font-bold py-2 px-4 rounded ml-4 hover:bg-gray-700">
-                            Login
-                        </button>
-                        <button className="bg-blue-500 text-white font-bold py-2 px-4 rounded ml-4 hover:bg-blue-600">
-                            Sign Up
-                        </button>
+                        <Link to="/login">
+                            <button className="bg-gray-800 text-white font-bold py-2 px-4 rounded ml-4 hover:bg-gray-700">
+                                Login
+                            </button>
+                        </Link>
+                        <Link to="/register">
+                            <button className="bg-blue-500 text-white font-bold py-2 px-4 rounded ml-4 hover:bg-blue-600">
+                                Sign Up
+                            </button>
+                        </Link>
                     </div>
                     <div className="md:hidden">
                         <button
@@ -55,7 +60,7 @@ const Navbar: React.FC = () => {
                     </div>
                 </div>
             </div>
-        </nav>
+        </nav >
     );
 };
 
