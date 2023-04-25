@@ -1,0 +1,13 @@
+.img-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.fade-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 1) 100%);
+}
