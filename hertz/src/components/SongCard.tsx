@@ -12,6 +12,7 @@ interface SongCardProps {
     title: string;
     artist: string;
     audioUrl: string;
+    variant?: 'discovery' | 'following';
 }
 
 type TinderCardApi = {
@@ -19,7 +20,7 @@ type TinderCardApi = {
     restoreCard: () => void;
 };
 
-const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl }) => {
+const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, variant = 'discovery' }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [lastDirection, setLastDirection] = useState<string>();
     const currentIndexRef = useRef(currentIndex);
@@ -80,6 +81,7 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl }
                     }
                 }}
                 preventSwipe={['up', 'down']}
+                className="tinderCard"
             >
                 <div className="card-container">
                     <div className="image-container">
@@ -98,19 +100,19 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl }
             </TinderCard>
             <div className="flex justify-center mt-8">
                 <div
-                    className={`bg-white w-16 h-16 rounded-full ml-4 cursor-pointer flex items-center justify-center ${crossClicked ? 'cross-clicked' : ''}`}
+                    className={`bg-gray-700 w-16 h-16 rounded-full ml-4 cursor-pointer flex items-center justify-center ${crossClicked ? 'cross-clicked' : ''}`}
                     onClick={handleCrossClick}
                 >
                     <ImCross className="text-red-500" size={30} />
                 </div>
                 <button
-                    className={`bg-white w-16 h-16 rounded-full ml-4 cursor-pointer flex items-center justify-center ${crossClicked ? 'cross-clicked' : ''}`}
+                    className={`bg-gray-700 w-16 h-16 rounded-full ml-4 cursor-pointer flex items-center justify-center ${crossClicked ? 'cross-clicked' : ''}`}
                     onClick={() => goBack()}
                 >
                     <GiAnticlockwiseRotation className="text-yellow-500" size={30} />
                 </button>
                 <div
-                    className={`bg-white w-16 h-16 rounded-full ml-4 cursor-pointer flex items-center justify-center ${heartClicked ? 'heart-clicked' : ''}`}
+                    className={`bg-gray-700 w-16 h-16 rounded-full ml-4 cursor-pointer flex items-center justify-center ${heartClicked ? 'heart-clicked' : ''}`}
                     onClick={handleHeartClick}
                 >
                     <BsFillSuitHeartFill className="text-blue-500" size={30} />

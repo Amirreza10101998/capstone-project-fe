@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const LoggedInNavbar: React.FC = () => {
-    const [activeTab, setActiveTab] = useState('discovery');
+interface LoggedInNavbarProps {
+    activeTab: string;
+    setActiveTab: (tab: string) => void;
+}
+
+const LoggedInNavbar: React.FC<LoggedInNavbarProps> = ({ activeTab, setActiveTab }) => {
+
 
     const handleSignOut = () => {
         // Handle sign out logic here
