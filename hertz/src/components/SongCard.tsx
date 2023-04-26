@@ -4,11 +4,14 @@ import { BsFillSuitHeartFill } from 'react-icons/bs';
 import { GiAnticlockwiseRotation } from 'react-icons/gi'
 import { ImCross } from 'react-icons/im'
 import '../styles/SongCard.css'
+import AudioPlayer from 'react-h5-audio-player';
+import 'react-h5-audio-player/lib/styles.css'; // Import default styles
 
 interface SongCardProps {
     imageUrl: string;
     title: string;
     artist: string;
+    audioUrl: string;
 }
 
 type TinderCardApi = {
@@ -16,7 +19,7 @@ type TinderCardApi = {
     restoreCard: () => void;
 };
 
-const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist }) => {
+const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [lastDirection, setLastDirection] = useState<string>();
     const currentIndexRef = useRef(currentIndex);
@@ -70,7 +73,7 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist }) => {
     return (
         <>
             <TinderCard
-                ref={childRefs[currentIndex] as any} // Updated the type assertion here
+                ref={childRefs[currentIndex] as any}
                 onSwipe={(dir) => {
                     if (dir === 'left' || dir === 'right') {
                         swiped(dir);
@@ -78,10 +81,19 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist }) => {
                 }}
                 preventSwipe={['up', 'down']}
             >
-                <div className="bg-gray-800 shadow-lg rounded-md p-4">
-                    <img src={imageUrl} alt="Song Artwork" className="w-full h-90 object-cover rounded-md" />
-                    <h3 className="text-2xl font-bold text-white mt-4">{title}</h3>
-                    <p className="text-gray-300">{artist}</p>
+                <div className="card-container">
+                    <div className="image-container">
+                        <img src={imageUrl} alt="Song Artwork" className="w-full h-100 object-cover" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-800 mt-4">{title}</h3>
+                    <p className="text-gray-500">{artist}</p>
+                    <AudioPlayer
+                        src={audioUrl}
+                        customAdditionalControls={[]}
+                        customVolumeControls={[]}
+                        autoPlayAfterSrcChange={false}
+                        className="w-full"
+                    />
                 </div>
             </TinderCard>
             <div className="flex justify-center mt-8">
