@@ -23,7 +23,7 @@
 .following-feed>* {
     scroll-snap-align: start;
     flex-shrink: 0;
-    height: calc(100vh - 96px);
+    height: calc(100vh - 190px);
     /* Adjust this value based on your layout, subtract the height of the LoggedInNavbar and additional space */
     margin-bottom: 32px;
     /* Add some margin at the bottom */
