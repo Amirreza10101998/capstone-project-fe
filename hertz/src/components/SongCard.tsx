@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useRef } from 'react';
 import TinderCard from 'react-tinder-card';
 import { BsFillSuitHeartFill } from 'react-icons/bs';
-import { GiAnticlockwiseRotation } from 'react-icons/gi'
-import { ImCross } from 'react-icons/im'
-import '../styles/SongCard.css'
+import { GiAnticlockwiseRotation } from 'react-icons/gi';
+import { ImCross } from 'react-icons/im';
+import { MdThumbUp, MdThumbDown, MdOutlineComment } from 'react-icons/md'; // Replace with the actual icon names
+import '../styles/SongCard.css';
 import AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
 
@@ -71,8 +72,21 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
         }, 300);
     };
 
+    const renderFollowingIcons = () => {
+        if (variant !== 'following') return null;
+
+        return (
+            <div className="icon-container">
+                <MdThumbUp className="icon" />
+                <MdThumbDown className="icon" />
+                <MdOutlineComment className="icon" />
+            </div>
+        );
+    };
+
     const CardContent = (
         <div className="card-container">
+            {renderFollowingIcons()}
             <div className="image-container">
                 <img src={imageUrl} alt="Song Artwork" className="w-full h-100 object-cover" />
             </div>

@@ -36,6 +36,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
+
 }
 
 .image-container {
@@ -51,4 +53,54 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+.card-container {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.card-container .rhap_container {
+    background-color: #f3f3f3;
+    box-shadow: none;
+    border-radius: 15px;
+}
+
+.card-container .rhap_progress-container {
+    background-color: #e0e0e0;
+}
+
+.card-container .rhap_progress-filled {
+    background-color: #3f51b5;
+}
+
+.card-container .rhap_controls-section {
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.card-container .rhap_additional-controls {
+    display: none;
+}
+
+.card-container .rhap_main-controls {
+    order: 1;
+    width: 100%;
+    justify-content: center;
+}
+
+/* Add the following styles */
+
+.icon-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.icon {
+    font-size: 24px;
+    margin-bottom: 10px;
+    cursor: pointer;
 }

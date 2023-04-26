@@ -11,7 +11,7 @@ const HomePage: React.FC = () => {
         imageUrl: 'https://via.placeholder.com/300',
         title: 'Song Title',
         artist: 'Artist Name',
-        audioUrl: 'https://example.com/audio-url.mp3',
+        audioUrl: 'https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3',
     };
 
     // Get activeTab state from LoggedInNavbar

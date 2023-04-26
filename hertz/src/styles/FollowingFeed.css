@@ -3,9 +3,10 @@
     flex-direction: column;
     overflow-y: scroll;
     scroll-snap-type: y mandatory;
+    scroll-snap-points-y: repeat(100%);
     max-height: calc(100vh - 100px);
     /* Adjust this value based on your layout, subtract the height of the LoggedInNavbar */
-    margin-top: 32px;
+
     /* Add some margin at the top */
 
 }
