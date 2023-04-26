@@ -1,7 +1,6 @@
-// FollowingFeed.tsx
-
 import React from 'react';
 import SongCard from './SongCard';
+import '../styles/FollowingFeed.css'
 
 const FollowingFeed: React.FC = () => {
     // Sample shared song data, replace this with API data later
@@ -18,13 +17,25 @@ const FollowingFeed: React.FC = () => {
             artist: 'Artist Name 2',
             audioUrl: 'https://example.com/audio-url-2.mp3',
         },
+        {
+            imageUrl: 'https://via.placeholder.com/300',
+            title: 'Shared Song 3',
+            artist: 'Artist Name 3',
+            audioUrl: 'https://example.com/audio-url-2.mp3',
+        },
+        {
+            imageUrl: 'https://via.placeholder.com/300',
+            title: 'Shared Song 4',
+            artist: 'Artist Name 4',
+            audioUrl: 'https://example.com/audio-url-2.mp3',
+        },
     ];
 
     return (
-        <div>
+        <div className="following-feed">
             {sharedSongs.map((song, index) => (
                 <SongCard
-                    key={index}
+                    key={`song-${index}`}
                     imageUrl={song.imageUrl}
                     title={song.title}
                     artist={song.artist}
@@ -35,5 +46,6 @@ const FollowingFeed: React.FC = () => {
         </div>
     );
 };
+
 
 export default FollowingFeed;

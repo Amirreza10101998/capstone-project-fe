@@ -1,0 +1,30 @@
+.following-feed {
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    max-height: calc(100vh - 55px);
+    /* Adjust this value based on your layout, subtract the height of the LoggedInNavbar */
+    margin-top: 32px;
+    /* Add some margin at the top */
+
+}
+
+.following-feed::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for Internet Explorer and Edge */
+.following-feed {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.following-feed>* {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    height: calc(100vh - 96px);
+    /* Adjust this value based on your layout, subtract the height of the LoggedInNavbar and additional space */
+    margin-bottom: 32px;
+    /* Add some margin at the bottom */
+}

@@ -5,7 +5,7 @@ import { GiAnticlockwiseRotation } from 'react-icons/gi'
 import { ImCross } from 'react-icons/im'
 import '../styles/SongCard.css'
 import AudioPlayer from 'react-h5-audio-player';
-import 'react-h5-audio-player/lib/styles.css'; // Import default styles
+import 'react-h5-audio-player/lib/styles.css';
 
 interface SongCardProps {
     imageUrl: string;
@@ -71,53 +71,63 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
         }, 300);
     };
 
+    const CardContent = (
+        <div className="card-container">
+            <div className="image-container">
+                <img src={imageUrl} alt="Song Artwork" className="w-full h-100 object-cover" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-800 mt-4">{title}</h3>
+            <p className="text-gray-500">{artist}</p>
+            <AudioPlayer
+                src={audioUrl}
+                customAdditionalControls={[]}
+                customVolumeControls={[]}
+                autoPlayAfterSrcChange={false}
+                className="w-full"
+            />
+        </div>
+    );
+
     return (
         <>
-            <TinderCard
-                ref={childRefs[currentIndex] as any}
-                onSwipe={(dir) => {
-                    if (dir === 'left' || dir === 'right') {
-                        swiped(dir);
-                    }
-                }}
-                preventSwipe={['up', 'down']}
-                className="tinderCard"
-            >
-                <div className="card-container">
-                    <div className="image-container">
-                        <img src={imageUrl} alt="Song Artwork" className="w-full h-100 object-cover" />
+            {variant === 'discovery' ? (
+                <TinderCard
+                    ref={childRefs[currentIndex] as any}
+                    onSwipe={(dir) => {
+                        if (dir === 'left' || dir === 'right') {
+                            swiped(dir);
+                        }
+                    }}
+                    preventSwipe={['up', 'down']}
+                    className="tinderCard"
+                >
+                    {CardContent}
+                </TinderCard>
+            ) : (
+                CardContent
+            )}
+            {variant === 'discovery' && (
+                <div className="flex justify-center mt-8">
+                    <div
+                        className={`bg-gray-700 w-16 h-16 rounded-full ml-4 cursor-pointer flex items-center justify-center ${crossClicked ? 'cross-clicked' : ''}`}
+                        onClick={handleCrossClick}
+                    >
+                        <ImCross className="text-red-500" size={30} />
                     </div>
-                    <h3 className="text-2xl font-bold text-gray-800 mt-4">{title}</h3>
-                    <p className="text-gray-500">{artist}</p>
-                    <AudioPlayer
-                        src={audioUrl}
-                        customAdditionalControls={[]}
-                        customVolumeControls={[]}
-                        autoPlayAfterSrcChange={false}
-                        className="w-full"
-                    />
+                    <button
+                        className={`bg-gray-700 w-16 h-16 rounded-full ml-4 cursor-pointer flex items-center justify-center ${crossClicked ? 'cross-clicked' : ''}`}
+                        onClick={() => goBack()}
+                    >
+                        <GiAnticlockwiseRotation className="text-yellow-500" size={30} />
+                    </button>
+                    <div
+                        className={`bg-gray-700 w-16 h-16 rounded-full ml-4 cursor-pointer flex items-center justify-center ${heartClicked ? 'heart-clicked' : ''}`}
+                        onClick={handleHeartClick}
+                    >
+                        <BsFillSuitHeartFill className="text-blue-500" size={30} />
+                    </div>
                 </div>
-            </TinderCard>
-            <div className="flex justify-center mt-8">
-                <div
-                    className={`bg-gray-700 w-16 h-16 rounded-full ml-4 cursor-pointer flex items-center justify-center ${crossClicked ? 'cross-clicked' : ''}`}
-                    onClick={handleCrossClick}
-                >
-                    <ImCross className="text-red-500" size={30} />
-                </div>
-                <button
-                    className={`bg-gray-700 w-16 h-16 rounded-full ml-4 cursor-pointer flex items-center justify-center ${crossClicked ? 'cross-clicked' : ''}`}
-                    onClick={() => goBack()}
-                >
-                    <GiAnticlockwiseRotation className="text-yellow-500" size={30} />
-                </button>
-                <div
-                    className={`bg-gray-700 w-16 h-16 rounded-full ml-4 cursor-pointer flex items-center justify-center ${heartClicked ? 'heart-clicked' : ''}`}
-                    onClick={handleHeartClick}
-                >
-                    <BsFillSuitHeartFill className="text-blue-500" size={30} />
-                </div>
-            </div>
+            )}
         </>
     );
 };
