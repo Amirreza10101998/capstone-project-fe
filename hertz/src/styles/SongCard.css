@@ -1,0 +1,31 @@
+.heart-clicked {
+    animation: heartClick 0.3s;
+}
+
+@keyframes heartClick {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+.cross-clicked {
+    animation: crossClick 0.3s;
+}
+
+@keyframes crossClick {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+}

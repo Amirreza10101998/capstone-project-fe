@@ -2,6 +2,7 @@ import React from 'react';
 import { FaApple, FaAndroid } from 'react-icons/fa';
 import { AiFillAndroid } from 'react-icons/ai'
 import "../styles/Hero.css"
+import { Link } from 'react-router-dom';
 
 interface HeroSectionProps {
     imgSrc: string;
@@ -20,9 +21,11 @@ const HeroSection: React.FC<HeroSectionProps> = ({ imgSrc }) => {
                             HERTZ is a social platform that allows you to keep track of all the music you
                             listen to and grow your passion for music with friends.
                         </p>
-                        <button className="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-20 hover:bg-blue-600">
-                            Create Account
-                        </button>
+                        <Link to={"/register"}>
+                            <button className="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-20 hover:bg-blue-600">
+                                Create Account
+                            </button>
+                        </Link>
                         <div className="inline-flex items-center ml-4 mt-4">
                             <p className="text-gray-300 mr-2">Or download our app on</p>
                             <a href="https://apps.apple.com/" className="mx-2 hover:text-white">

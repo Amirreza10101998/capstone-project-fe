@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import TinderCard from 'react-tinder-card';
-import { useSwipe } from '../components/SwipeContext';
+import { BsFillSuitHeartFill } from 'react-icons/bs';
+import { GiAnticlockwiseRotation } from 'react-icons/gi'
+import { ImCross } from 'react-icons/im'
+import '../styles/SongCard.css'
 
 interface SongCardProps {
     imageUrl: string;
@@ -8,13 +11,71 @@ interface SongCardProps {
     artist: string;
 }
 
+type TinderCardApi = {
+    swipe: (dir: 'left' | 'right') => void;
+    restoreCard: () => void;
+};
+
 const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist }) => {
-    const { onSwipe } = useSwipe();
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [lastDirection, setLastDirection] = useState<string>();
+    const currentIndexRef = useRef(currentIndex);
+    const [heartClicked, setHeartClicked] = useState(false);
+    const [crossClicked, setCrossClicked] = useState(false);
+
+    const childRefs = useMemo(
+        () =>
+            Array(1) // Assuming you only have one song card
+                .fill(0)
+                .map((i) => React.createRef<TinderCardApi>()),
+        []
+    );
+
+    const swiped = (direction: 'left' | 'right') => {
+        setLastDirection(direction);
+        setCurrentIndex((prevIndex) => prevIndex - 1);
+        currentIndexRef.current = currentIndex;
+    };
+
+    const swipe = (dir: 'left' | 'right') => {
+        if (currentIndex >= 0 && childRefs[currentIndex]?.current) {
+            childRefs[currentIndex].current!.swipe(dir); // Swipe the card!
+        }
+    };
+
+    const goBack = async () => {
+        if (currentIndex >= 0) return;
+        const newIndex = currentIndex + 1;
+        setCurrentIndex(newIndex);
+        currentIndexRef.current = newIndex;
+        await childRefs[newIndex]?.current?.restoreCard();
+    };
+
+    const handleHeartClick = () => {
+        swipe('right');
+        setHeartClicked(true);
+        setTimeout(() => {
+            setHeartClicked(false);
+        }, 300);
+    };
+
+    const handleCrossClick = () => {
+        swipe('left');
+        setCrossClicked(true);
+        setTimeout(() => {
+            setCrossClicked(false);
+        }, 300);
+    };
 
     return (
         <>
             <TinderCard
-                onSwipe={onSwipe}
+                ref={childRefs[currentIndex] as any} // Updated the type assertion here
+                onSwipe={(dir) => {
+                    if (dir === 'left' || dir === 'right') {
+                        swiped(dir);
+                    }
+                }}
                 preventSwipe={['up', 'down']}
             >
                 <div className="bg-gray-800 shadow-lg rounded-md p-4">
@@ -24,24 +85,24 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist }) => {
                 </div>
             </TinderCard>
             <div className="flex justify-center mt-8">
-                <button
-                    className="bg-red-500 text-white w-16 h-16 rounded-full mr-4 hover:bg-red-600"
-                    onClick={() => onSwipe('left')}
+                <div
+                    className={`bg-white w-16 h-16 rounded-full ml-4 cursor-pointer flex items-center justify-center ${crossClicked ? 'cross-clicked' : ''}`}
+                    onClick={handleCrossClick}
                 >
-                    <i className="fas fa-times" />
-                </button>
+                    <ImCross className="text-red-500" size={30} />
+                </div>
                 <button
-                    className="bg-yellow-500 text-white w-16 h-16 rounded-full mx-4 hover:bg-yellow-600"
-                    onClick={() => onSwipe('up')}
+                    className={`bg-white w-16 h-16 rounded-full ml-4 cursor-pointer flex items-center justify-center ${crossClicked ? 'cross-clicked' : ''}`}
+                    onClick={() => goBack()}
                 >
-                    <i className="fas fa-redo" />
+                    <GiAnticlockwiseRotation className="text-yellow-500" size={30} />
                 </button>
-                <button
-                    className="bg-green-500 text-white w-16 h-16 rounded-full ml-4 hover:bg-green-600"
-                    onClick={() => onSwipe('right')}
+                <div
+                    className={`bg-white w-16 h-16 rounded-full ml-4 cursor-pointer flex items-center justify-center ${heartClicked ? 'heart-clicked' : ''}`}
+                    onClick={handleHeartClick}
                 >
-                    <i className="fas fa-heart" />
-                </button>
+                    <BsFillSuitHeartFill className="text-blue-500" size={30} />
+                </div>
             </div>
         </>
     );
