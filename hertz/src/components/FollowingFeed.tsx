@@ -1,6 +1,9 @@
 import React from 'react';
 import SongCard from './SongCard';
+import CommentSection from './CommentSection';
 import '../styles/FollowingFeed.css'
+import { Col, Container, Row } from 'react-bootstrap';
+import UserListRecommendations from './SuggestionList';
 
 const FollowingFeed: React.FC = () => {
     // Sample shared song data, replace this with API data later
@@ -56,20 +59,29 @@ const FollowingFeed: React.FC = () => {
     ];
 
     return (
-        <div className="following-feed">
+        <Container fluid className="following-feed">
             {sharedSongs.map((song, index) => (
-                <SongCard
-                    key={`song-${index}`}
-                    imageUrl={song.imageUrl}
-                    title={song.title}
-                    artist={song.artist}
-                    audioUrl={song.audioUrl}
-                    variant="following"
-                />
+                <Row key={`row-${index}`} className="following-feed-row">
+                    <Col lg={4} className="">
+                        <CommentSection />
+                    </Col>
+                    <Col lg={4} className="d-flex justify-content-center align-items-center">
+                        <SongCard
+                            key={`song-${index}`}
+                            imageUrl={song.imageUrl}
+                            title={song.title}
+                            artist={song.artist}
+                            audioUrl={song.audioUrl}
+                            variant="following"
+                        />
+                    </Col>
+                    <Col lg={4} className="d-flex justify-content-center align-items-center">
+                        <UserListRecommendations />
+                    </Col>
+                </Row>
             ))}
-        </div>
+        </Container>
     );
 };
-
 
 export default FollowingFeed;

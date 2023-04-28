@@ -5,17 +5,14 @@
     scroll-snap-type: y mandatory;
     scroll-snap-points-y: repeat(100%);
     max-height: calc(100vh - 100px);
-    /* Adjust this value based on your layout, subtract the height of the LoggedInNavbar */
-
-    /* Add some margin at the top */
-
+    width: 100%;
+    margin-top: 50px;
 }
 
 .following-feed::-webkit-scrollbar {
     display: none;
 }
 
-/* Hide scrollbar for Internet Explorer and Edge */
 .following-feed {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -25,7 +22,11 @@
     scroll-snap-align: start;
     flex-shrink: 0;
     height: calc(100vh - 190px);
-    /* Adjust this value based on your layout, subtract the height of the LoggedInNavbar and additional space */
     margin-bottom: 50px;
-    /* Add some margin at the bottom */
+}
+
+.following-feed-row {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 90px;
 }

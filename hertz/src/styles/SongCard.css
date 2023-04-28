@@ -37,6 +37,14 @@
     flex-direction: column;
     align-items: center;
     position: relative;
+    width: 400px;
+    /* Set the desired width */
+    height: 580px;
+    /* Set the desired height */
+    max-width: 100%;
+    /* Ensure the card won't overflow its container */
+    margin: 0 auto;
+    /* Center the card horizontally */
 
 }
 
