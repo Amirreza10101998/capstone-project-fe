@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const RegistrationPage: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -11,6 +12,8 @@ const RegistrationPage: React.FC = () => {
     const nextStep = () => {
         setStep(step + 1);
     };
+
+    const navigate = useNavigate();
 
     const registerUser = async (email: string, username: string, password: string, favorite_genres: string[], favorite_artists: string[]) => {
         try {
@@ -26,17 +29,26 @@ const RegistrationPage: React.FC = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log('New user created:', data);
+                return true;
             } else {
                 console.error('Error registering user:', response.statusText);
+                return false;
             }
         } catch (error) {
             console.error('Error registering user:', error);
+            return false;
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        registerUser(email, username, password, favoriteGenres.split(','), favoriteArtists.split(','));
+        const success = await registerUser(email, username, password, favoriteGenres.split(','), favoriteArtists.split(','));
+        if (success) {
+            navigate('/login');
+        } else {
+            console.error('Registration failed. Please try again.')
+        }
     };
 
 
@@ -87,7 +99,7 @@ const RegistrationPage: React.FC = () => {
                     </form>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

@@ -1,12 +1,13 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import TinderCard from 'react-tinder-card';
 import { BsFillSuitHeartFill } from 'react-icons/bs';
 import { GiAnticlockwiseRotation } from 'react-icons/gi';
 import { ImCross } from 'react-icons/im';
-import { MdThumbUp, MdThumbDown, MdOutlineComment } from 'react-icons/md'; // Replace with the actual icon names
+import { MdThumbUp, MdThumbDown, MdOutlineComment } from 'react-icons/md';
 import '../styles/SongCard.css';
 import AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
+import { ClipLoader } from 'react-spinners';
 
 interface SongCardProps {
     imageUrl: string;
@@ -22,38 +23,76 @@ type TinderCardApi = {
 };
 
 const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, variant = 'discovery' }) => {
-    const [currentIndex, setCurrentIndex] = useState(0);
     const [lastDirection, setLastDirection] = useState<string>();
-    const currentIndexRef = useRef(currentIndex);
     const [heartClicked, setHeartClicked] = useState(false);
     const [crossClicked, setCrossClicked] = useState(false);
+    const [songData, setSongData] = useState<SongCardProps[] | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
+    const [currentIndex, setCurrentIndex] = useState(0);
 
-    const childRefs = useMemo(
-        () =>
-            Array(1) // Assuming you only have one song card
-                .fill(0)
-                .map((i) => React.createRef<TinderCardApi>()),
-        []
-    );
+
+
+    const childRef = useRef<TinderCardApi | null>(null);
+
+    const fetchSongData = async () => {
+        try {
+            setLoading(true);
+            const token = localStorage.getItem('accessToken');
+            const apiUrl = process.env.REACT_APP_BE_URL;
+            const response = await fetch(`${apiUrl}/feed/discovery`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                const fetchedData = await response.json();
+                const song = fetchedData.result[0];
+                const mappedData: SongCardProps = {
+                    imageUrl: song.album_art,
+                    title: song.song_title,
+                    artist: song.artist,
+                    audioUrl: song.song_url,
+                };
+                setSongData((prevSongData) => (prevSongData ? [...prevSongData, mappedData] : [mappedData]));
+            } else {
+                console.error('Error fetching song data:', response.statusText);
+                setError(true);
+            }
+        } catch (error) {
+            console.error('Error fetching song data:', error);
+            setError(true);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    useEffect(() => {
+        fetchSongData();
+    }, []);
+
 
     const swiped = (direction: 'left' | 'right') => {
         setLastDirection(direction);
-        setCurrentIndex((prevIndex) => prevIndex - 1);
-        currentIndexRef.current = currentIndex;
+        if (songData) {
+            setCurrentIndex((prevIndex) => prevIndex + 1);
+        }
     };
 
+
+
     const swipe = (dir: 'left' | 'right') => {
-        if (currentIndex >= 0 && childRefs[currentIndex]?.current) {
-            childRefs[currentIndex].current!.swipe(dir); // Swipe the card!
+        if (childRef?.current) {
+            childRef.current.swipe(dir); // Swipe the card!
         }
     };
 
     const goBack = async () => {
-        if (currentIndex >= 0) return;
-        const newIndex = currentIndex + 1;
-        setCurrentIndex(newIndex);
-        currentIndexRef.current = newIndex;
-        await childRefs[newIndex]?.current?.restoreCard();
+        await childRef?.current?.restoreCard();
     };
 
     const handleHeartClick = () => {
@@ -84,7 +123,7 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
         );
     };
 
-    const CardContent = (
+    const CardContent: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl }) => (
         <div className="card-container">
             {renderFollowingIcons()}
             <div className="image-container">
@@ -104,42 +143,49 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
 
     return (
         <>
-            {variant === 'discovery' ? (
-                <TinderCard
-                    ref={childRefs[currentIndex] as any}
-                    onSwipe={(dir) => {
-                        if (dir === 'left' || dir === 'right') {
-                            swiped(dir);
-                        }
-                    }}
-                    preventSwipe={['up', 'down']}
-                    className="tinderCard"
-                >
-                    {CardContent}
-                </TinderCard>
+            {songData && songData.length > 0 ? (
+                <>
+                    {variant === 'discovery' ? (
+                        <TinderCard
+                            ref={childRef as any}
+                            onSwipe={(dir) => {
+                                if (dir === 'left' || dir === 'right') {
+                                    swiped(dir);
+                                }
+                            }}
+                            className="tinderCard"
+                        >
+                            <CardContent {...songData[currentIndex]} />
+                        </TinderCard>
+                    ) : (
+                        <CardContent {...songData[currentIndex]} />
+                    )}
+                    {variant === 'discovery' && (
+                        <div className="flex justify-center mt-8">
+                            <div
+                                className={`bg-gray-700 w-16 h-16 rounded-full ml-4 cursor-pointer flex items-center justify-center ${crossClicked ? 'cross-clicked' : ''}`}
+                                onClick={handleCrossClick}
+                            >
+                                <ImCross className="text-red-500" size={30} />
+                            </div>
+                            <button
+                                className={`bg-gray-700 w-16 h-16 rounded-full ml-4 cursor-pointer flex items-center justify-center ${crossClicked ? 'cross-clicked' : ''}`}
+                                onClick={() => goBack()}
+                            >
+                                <GiAnticlockwiseRotation className="text-yellow-500" size={30} />
+                            </button>
+                            <div
+                                className={`bg-gray-700 w-16 h-16 rounded-full ml-4 cursor-pointer flex items-center justify-center ${heartClicked ? 'heart-clicked' : ''}`}
+                                onClick={handleHeartClick}
+                            >
+                                <BsFillSuitHeartFill className="text-blue-500" size={30} />
+                            </div>
+                        </div>
+                    )}
+                </>
             ) : (
-                CardContent
-            )}
-            {variant === 'discovery' && (
-                <div className="flex justify-center mt-8">
-                    <div
-                        className={`bg-gray-700 w-16 h-16 rounded-full ml-4 cursor-pointer flex items-center justify-center ${crossClicked ? 'cross-clicked' : ''}`}
-                        onClick={handleCrossClick}
-                    >
-                        <ImCross className="text-red-500" size={30} />
-                    </div>
-                    <button
-                        className={`bg-gray-700 w-16 h-16 rounded-full ml-4 cursor-pointer flex items-center justify-center ${crossClicked ? 'cross-clicked' : ''}`}
-                        onClick={() => goBack()}
-                    >
-                        <GiAnticlockwiseRotation className="text-yellow-500" size={30} />
-                    </button>
-                    <div
-                        className={`bg-gray-700 w-16 h-16 rounded-full ml-4 cursor-pointer flex items-center justify-center ${heartClicked ? 'heart-clicked' : ''}`}
-                        onClick={handleHeartClick}
-                    >
-                        <BsFillSuitHeartFill className="text-blue-500" size={30} />
-                    </div>
+                <div className="flex justify-center items-center min-h-screen">
+                    <ClipLoader color="#4A90E2" size={50} />
                 </div>
             )}
         </>
