@@ -17,6 +17,13 @@ interface SongCardProps {
     variant?: 'discovery' | 'following';
 }
 
+interface FetchedSongData {
+    album_art: string;
+    song_title: string;
+    artist: string;
+    song_url: string;
+}
+
 type TinderCardApi = {
     swipe: (dir: 'left' | 'right') => void;
     restoreCard: () => void;
@@ -30,8 +37,6 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
-
-
 
     const childRef = useRef<TinderCardApi | null>(null);
 
@@ -50,14 +55,13 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
 
             if (response.ok) {
                 const fetchedData = await response.json();
-                const song = fetchedData.result[0];
-                const mappedData: SongCardProps = {
+                const mappedData: SongCardProps[] = fetchedData.result.map((song: FetchedSongData) => ({
                     imageUrl: song.album_art,
                     title: song.song_title,
                     artist: song.artist,
                     audioUrl: song.song_url,
-                };
-                setSongData((prevSongData) => (prevSongData ? [...prevSongData, mappedData] : [mappedData]));
+                }));
+                setSongData((prevSongData) => (prevSongData ? [...prevSongData, ...mappedData] : mappedData));
             } else {
                 console.error('Error fetching song data:', response.statusText);
                 setError(true);
@@ -75,6 +79,12 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
         fetchSongData();
     }, []);
 
+    useEffect(() => {
+        if (songData && currentIndex === songData.length - 1) {
+            fetchSongData();
+        }
+    }, [currentIndex, songData]);
+
 
     const swiped = (direction: 'left' | 'right') => {
         setLastDirection(direction);
@@ -82,8 +92,6 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
             setCurrentIndex((prevIndex) => prevIndex + 1);
         }
     };
-
-
 
     const swipe = (dir: 'left' | 'right') => {
         if (childRef?.current) {
@@ -143,23 +151,26 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
 
     return (
         <>
-            {songData && songData.length > 0 ? (
+            {!loading && songData && songData.length > 0 ? (
                 <>
-                    {variant === 'discovery' ? (
-                        <TinderCard
-                            ref={childRef as any}
-                            onSwipe={(dir) => {
-                                if (dir === 'left' || dir === 'right') {
-                                    swiped(dir);
-                                }
-                            }}
-                            className="tinderCard"
-                        >
+                    {
+                        variant === 'discovery' ? (
+                            <TinderCard
+                                key={currentIndex}
+                                ref={childRef as any}
+                                onSwipe={(dir) => {
+                                    if (dir === 'left' || dir === 'right') {
+                                        swiped(dir);
+                                    }
+                                }}
+                                className="tinderCard"
+                            >
+                                <CardContent {...songData[currentIndex]} />
+                            </TinderCard>
+                        ) : (
                             <CardContent {...songData[currentIndex]} />
-                        </TinderCard>
-                    ) : (
-                        <CardContent {...songData[currentIndex]} />
-                    )}
+                        )
+                    }
                     {variant === 'discovery' && (
                         <div className="flex justify-center mt-8">
                             <div
