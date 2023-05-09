@@ -61,6 +61,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 15px;
 }
 
 .card-container {
@@ -137,4 +138,34 @@
     margin-top: 10px;
     text-align: center;
     display: block;
+}
+
+.rswp__active._InfoRSWP.__107yxqe {
+    display: none;
+}
+
+._VolumeInlineRSWP.__53ysj svg:first-of-type {
+    display: none;
+}
+
+.rswp__toggle._ControlsButtonRSWP.__3hmsj {
+    display: block;
+}
+
+._ControlsButtonRSWP.__3hmsj {
+    display: none;
+}
+
+._ControlsRSWP.__11aa6ep {
+    justify-content: center;
+    align-items: center;
+    width: 100%
+}
+
+._ActionsRSWP.__1irer0f {
+    display: none;
+}
+
+.rswp__active._InfoRSWP.__7cu1cx {
+    display: none;
 }
