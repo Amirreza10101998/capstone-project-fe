@@ -90,7 +90,7 @@ const LoginPage: React.FC = () => {
                     </form>
                 </div>
             </div>
-        </div >
+        </div>
     );
 };
 

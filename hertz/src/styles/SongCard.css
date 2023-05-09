@@ -112,3 +112,29 @@
     margin-bottom: 10px;
     cursor: pointer;
 }
+
+.fade-in {
+    animation: fadeIn 1.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.connect-spotify-button {
+    background-color: #1db954;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 10px;
+    text-align: center;
+    display: block;
+}

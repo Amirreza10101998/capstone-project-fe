@@ -1,5 +1,3 @@
-// HomePage.tsx
-
 import React from 'react';
 import LoggedInNavbar from '../components/LoggedInNavbar';
 import SongCard from '../components/SongCard';
@@ -10,13 +8,12 @@ import { CSSTransition } from 'react-transition-group';
 
 const HomePage: React.FC = () => {
     const song = {
-        imageUrl: 'https://preview.redd.it/expanding-kanye-wests-graduation-album-cover-art-v0-ec77yjkqxd991.png?width=640&crop=smart&auto=webp&s=c7141cd720a18b9ff48574f2eb46e658a87316be',
-        title: 'Song Title',
-        artist: 'Artist Name',
-        audioUrl: 'https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_700KB.mp3',
+        imageUrl: '',
+        title: '',
+        artist: '',
+        audioUrl: '',
     };
 
-    // Get activeTab state from LoggedInNavbar
     const [activeTab, setActiveTab] = React.useState('discovery');
 
     return (
@@ -37,6 +34,7 @@ const HomePage: React.FC = () => {
                                 title={song.title}
                                 artist={song.artist}
                                 audioUrl={song.audioUrl}
+                                spotifyAccessToken={song.artist}
                             />
                         </CSSTransition>
                         <CSSTransition

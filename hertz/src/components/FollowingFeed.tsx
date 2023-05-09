@@ -72,6 +72,7 @@ const FollowingFeed: React.FC = () => {
                             title={song.title}
                             artist={song.artist}
                             audioUrl={song.audioUrl}
+                            spotifyAccessToken={song.title}
                             variant="following"
                         />
                     </Col>
