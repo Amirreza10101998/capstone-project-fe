@@ -1,0 +1,68 @@
+.shared-song-card {
+    background-color: #000;
+    color: #fff;
+    padding: 20px;
+    border: 1px solid #333;
+    border-radius: 15px;
+    width: 400px;
+    transition: box-shadow .4s;
+    margin-bottom: 20px;
+}
+
+.shared-song-card:hover {
+    cursor: pointer;
+}
+
+.image-container {
+    width: 100%;
+    padding-bottom: 100%;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.image-container img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 15px;
+}
+
+.user-details {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.user-details img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.shared-by {
+    font-size: 14px;
+    color: #aaa;
+}
+
+.shared-song-card h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin-top: 20px;
+}
+
+.shared-song-card p {
+    color: #aaa;
+}
+
+.shared-song-card .caption {
+    margin-top: 10px;
+}
+
+.shared-song-card .caption p {
+    font-size: 14px;
+    color: #777;
+}

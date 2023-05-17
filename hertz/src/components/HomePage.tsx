@@ -8,6 +8,7 @@ import { CSSTransition } from 'react-transition-group';
 
 const HomePage: React.FC = () => {
     const song = {
+        id: '',
         imageUrl: '',
         title: '',
         artist: '',
@@ -30,6 +31,7 @@ const HomePage: React.FC = () => {
                             mountOnEnter
                         >
                             <SongCard
+                                id={song.id}
                                 imageUrl={song.imageUrl}
                                 title={song.title}
                                 artist={song.artist}

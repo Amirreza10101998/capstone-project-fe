@@ -26,6 +26,7 @@ const LoginPage: React.FC = () => {
                 const data = await res.json();
                 localStorage.setItem("accessToken", data.accessToken);
                 localStorage.setItem("refreshToken", data.refreshToken);
+                console.log(data.accessToken)
                 navigate('/home');
             } else {
                 setError("Invalid email or password");

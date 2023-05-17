@@ -7,8 +7,11 @@ import { MdThumbUp, MdThumbDown, MdOutlineComment } from 'react-icons/md';
 import '../styles/SongCard.css';
 import { ClipLoader } from 'react-spinners';
 import SpotifyWebPlayback from 'react-spotify-web-playback';
+import { Dialog, Transition } from '@headlessui/react';
+
 
 interface SongCardProps {
+    id: string;
     imageUrl: string;
     title: string;
     artist: string;
@@ -18,7 +21,8 @@ interface SongCardProps {
     variant?: 'discovery' | 'following';
 }
 
-interface FetchedSongData {
+export interface FetchedSongData {
+    id: string;
     album_art: string;
     song_title: string;
     artist: string;
@@ -33,6 +37,7 @@ type TinderCardApi = {
 
 const SPOTIFY_CLIENT_ID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
 const SPOTIFY_REDIRECT_URI = process.env.REACT_APP_SPOTIFY_REDIRECT_URI;
+const REACT_APP_BE_URL = process.env.REACT_APP_BE_URL
 
 const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, variant = 'discovery' }) => {
     const [lastDirection, setLastDirection] = useState<string>();
@@ -48,6 +53,46 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
     const [playing, setPlaying] = useState(false);
     const childRef = useRef<TinderCardApi | null>(null);
     const [isConnectedToSpotify, setIsConnectedToSpotify] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentSong, setCurrentSong] = useState<SongCardProps | null>(null);
+    const [isShareFormOpen, setIsShareFormOpen] = useState(false);
+    const [shareMessage, setShareMessage] = useState('');
+
+    const handleShare = async (e: any) => {
+        e.preventDefault();
+
+        console.log(`Sharing song "${currentSong?.title}" with message: "${shareMessage}"`);
+
+        try {
+            const token = accessToken
+            const apiUrl = process.env.REACT_APP_BE_URL;
+            const response = await fetch(`${apiUrl}/post`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    content: shareMessage,
+                    songCardId: currentSong?.id,
+                }),
+            });
+
+            if (response.ok) {
+                console.log('Successfully shared the song!');
+            } else {
+                console.error('Error while sharing the song:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error while sharing the song:', error);
+        }
+
+        // Close the share form and reset the share message
+        setIsShareFormOpen(false);
+        setShareMessage('');
+        setIsModalOpen(false);
+    }
+
 
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -117,6 +162,7 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
                 const fetchedData = await response.json();
                 console.log('fetchedData:', fetchedData); // Inspect the fetched data
                 const mappedData: SongCardProps[] = fetchedData.result.map((song: FetchedSongData) => ({
+                    id: song.id,
                     imageUrl: song.album_art,
                     title: song.song_title,
                     artist: song.artist,
@@ -157,7 +203,7 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
 
     const swipe = (dir: 'left' | 'right') => {
         if (childRef?.current) {
-            childRef.current.swipe(dir); // Swipe the card!
+            childRef.current.swipe(dir);
         }
     };
 
@@ -170,8 +216,14 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
         setHeartClicked(true);
         setTimeout(() => {
             setHeartClicked(false);
-        }, 300);
+            setIsModalOpen(true);
+            if (songData) {
+                setCurrentSong(songData[currentIndex]);
+            }
+        }, 600);
     };
+
+
 
     const handleCrossClick = () => {
         swipe('left');
@@ -287,12 +339,93 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
                             </div>
                         </div>
                     )}
+
+                    <Transition show={isModalOpen} as={React.Fragment}>
+                        <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} className="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title">
+                            <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:p-0">
+                                <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-75 transition-opacity" />
+                                <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                                <Transition.Child
+                                    enter="transition-opacity duration-500 ease-in-out"
+                                    enterFrom="opacity-0"
+                                    enterTo="opacity-100"
+                                    leave="transition-opacity duration-500 ease-in-out"
+                                    leaveFrom="opacity-100"
+                                    leaveTo="opacity-0"
+                                >
+                                    <div className="inline-block bg-gray-800 text-white rounded-lg text-left overflow-hidden shadow-xl transform transition-opacity sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                                        {isShareFormOpen ? (
+                                            <>
+                                                <div className="flex justify-between items-center border-b border-gray-700 p-6">
+                                                    <button onClick={() => setIsShareFormOpen(false)} className="ml-3 bg-transparent border-none">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="h-6 w-6 text-gray-300 hover:text-white">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                                        </svg>
+                                                    </button>
+                                                    <div className="flex items-center space-x-4">
+                                                        <img className="h-24 w-24" src={currentSong?.imageUrl} alt="Album Cover" />
+                                                        <div>
+                                                            <h4 className="text-lg font-medium text-white">{currentSong?.title}</h4>
+                                                            <p className="text-sm text-gray-500">{currentSong?.artist}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <form onSubmit={handleShare} className="px-6 py-4 bg-gray-700">
+                                                    <textarea
+                                                        value={shareMessage}
+                                                        onChange={(e) => setShareMessage(e.target.value)}
+                                                        className="w-full px-3 py-2 text-sm text-gray-700 bg-gray-800 rounded"
+                                                        placeholder="Write a caption..."
+                                                        required
+                                                    />
+                                                    <button type="submit" className="px-4 py-2 mt-2 text-sm text-white bg-blue-500 hover:bg-blue-700 rounded">Post</button>
+                                                </form>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <div className="flex justify-between items-center border-b border-gray-700 p-6">
+                                                    <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-white">
+                                                        Congratulations!
+                                                    </Dialog.Title>
+                                                    <button onClick={() => setIsModalOpen(false)} className="ml-3 bg-transparent border-none">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="h-6 w-6 text-gray-300 hover:text-white">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                                <div className="px-6 py-4">
+                                                    <div className="flex items-center space-x-4">
+                                                        <img className="h-24 w-24" src={currentSong?.imageUrl} alt="Album Cover" />
+                                                        <div>
+                                                            <h4 className="text-lg font-medium text-white">{currentSong?.title}</h4>
+                                                            <p className="text-sm text-gray-500">{currentSong?.artist}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <Dialog.Description as="div" className="px-6 py-4 text-sm text-gray-500">
+                                                    You've liked a song! What would you like to do next?
+                                                </Dialog.Description>
+                                                <div className="px-6 py-4 bg-gray-700 flex justify-between">
+                                                    <button type="button" className="px-4 py-2 text-sm text-white bg-blue-500 hover:bg-blue-700 rounded" onClick={() => setIsShareFormOpen(true)}>Share</button>
+                                                    <button type="button" className="px-4 py-2 text-sm text-white bg-blue-500 hover:bg-blue-700 rounded" onClick={() => { /* insert your function to add a song to playlist here */ }}>Add to Playlist</button>
+                                                </div>
+                                            </>
+                                        )}
+                                    </div>
+                                </Transition.Child>
+                            </div>
+                        </Dialog>
+                    </Transition>
+
+
+
                 </>
             ) : (
                 <div className="flex justify-center items-center min-h-screen">
                     <ClipLoader color="#4A90E2" size={50} />
                 </div>
-            )}
+            )
+            }
         </>
     );
 };

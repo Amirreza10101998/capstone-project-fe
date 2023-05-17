@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../styles/registrationPageAnimations.css'
+import { TbMicrophone2 } from 'react-icons/tb'
+
 
 const RegistrationPage: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -7,13 +10,13 @@ const RegistrationPage: React.FC = () => {
     const [password, setPassword] = useState('');
     const [favoriteGenres, setFavoriteGenres] = useState('');
     const [favoriteArtists, setFavoriteArtists] = useState('');
-    const [step, setStep] = useState(1);
-
-    const nextStep = () => {
-        setStep(step + 1);
-    };
+    const [step, setStep] = useState(0);
 
     const navigate = useNavigate();
+
+    const handleNext = () => {
+        setStep(step + 1);
+    };
 
     const registerUser = async (email: string, username: string, password: string, favorite_genres: string[], favorite_artists: string[]) => {
         try {
@@ -41,9 +44,8 @@ const RegistrationPage: React.FC = () => {
     };
 
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        const success = await registerUser(email, username, password, favoriteGenres.split(','), favoriteArtists.split(','));
+    const finishRegistration = async () => {
+        const success = await registerUser(email, username, password, selectedGenres, favoriteArtists.split(','));
         if (success) {
             navigate('/login');
         } else {
@@ -51,6 +53,17 @@ const RegistrationPage: React.FC = () => {
         }
     };
 
+    const genres = ['Pop', 'Rap', 'Alternative', 'Rock', 'R&B', 'Electronic', 'Country', 'Jazz', 'Blues', 'Funk'];
+
+    const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+
+    const handleGenreSelection = (genre: string) => {
+        if (selectedGenres.includes(genre)) {
+            setSelectedGenres(selectedGenres.filter(item => item !== genre));
+        } else {
+            setSelectedGenres([...selectedGenres, genre]);
+        }
+    };
 
     return (
         <div className="bg-black min-h-screen flex items-center">
@@ -59,49 +72,65 @@ const RegistrationPage: React.FC = () => {
                     <h1 className="text-white text-4xl font-bold mb-8">
                         Create Your HERTZ Account
                     </h1>
-                    <form onSubmit={handleSubmit}>
-                        {step === 1 && (
-                            <>
-                                <div className="mb-6">
-                                    <label htmlFor="email" className="block text-gray-300 mb-2">Email</label>
-                                    <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-gray-800 text-white px-3 py-2 rounded focus:outline-none" required />
-                                </div>
-                                <div className="mb-6">
-                                    <label htmlFor="username" className="block text-gray-300 mb-2">Username</label>
-                                    <input type="text" id="username" value={username} onChange={(e) => setUsername(e.target.value)} className="w-full bg-gray-800 text-white px-3 py-2 rounded focus:outline-none" required />
-                                </div>
-                                <button type="button" onClick={nextStep} className="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-600 w-full">Next</button>
-                            </>
-                        )}
-                        {step === 2 && (
-                            <>
-                                <div className="mb-6">
-                                    <label htmlFor="password" className="block text-gray-300 mb-2">Password</label>
-                                    <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-gray-800 text-white px-3 py-2 rounded focus:outline-none" required />
-                                </div>
-                                <button type="button" onClick={nextStep} className="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-600 w-full">Next</button>
-                            </>
-                        )}
+                    {step === 0 && (
+                        <div>
+                            <div className="mb-6">
+                                <label htmlFor="email" className="block text-gray-300 mb-2">Email</label>
+                                <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-gray-800 text-white px-3 py-2 rounded focus:outline-none" required />
+                            </div>
+                            <div className="mb-6">
+                                <label htmlFor="username" className="block text-gray-300 mb-2">Username</label>
+                                <input type="text" id="username" value={username} onChange={(e) => setUsername(e.target.value)} className="w-full bg-gray-800 text-white px-3 py-2 rounded focus:outline-none" required />
+                            </div>
+                            <button type="button" onClick={handleNext} className="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-600 w-full">Next</button>
+                        </div>
+                    )}
+                    {step === 1 && (
+                        <div className="mb-6">
+                            <label htmlFor="password" className="block text-gray-300 mb-2">Password</label>
+                            <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-gray-800 text-white px-3 py-2 rounded focus:outline-none" required />
+                            <button type="button" onClick={handleNext} className="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-600 w-full">Next</button>
+                        </div>
+                    )}
+                    {step === 2 && (
+                        <div>
+                            <h2 className="text-white text-2xl font-bold mb-4">Select Your Favorite Genres</h2>
+                            <table className="w-full bg-gray-800 text-white">
+                                <tbody>
+                                    {genres.map((genre, index) => (
+                                        <tr key={index}
+                                            className={`border-t border-gray-700 cursor-pointer hover:bg-gray-700 ${selectedGenres.includes(genre) ? 'bg-blue-500' : ''}`}
+                                            onClick={() => handleGenreSelection(genre)}
+                                        >
+                                            <td className="px-4 py-2">
+                                                <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center">
+                                                    <span className="text-xs text-white"><TbMicrophone2 /></span>
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-2">{genre}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            <button type="button" onClick={handleNext} className="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-600 w-full">Next</button>
+                        </div>
+                    )}
 
-                        {step === 3 && (
-                            <>
-                                <div className="mb-6">
-                                    <label htmlFor="favoriteGenres" className="block text-gray-300 mb-2">Favorite Genres (comma-separated)</label>
-                                    <input type="text" id="favoriteGenres" value={favoriteGenres} onChange={(e) => setFavoriteGenres(e.target.value)} className="w-full bg-gray-800 text-white px-3 py-2 rounded focus:outline-none" required />
-                                </div>
-                                <div className="mb-6">
-                                    <label htmlFor="favoriteArtists" className="block text-gray-300 mb-2">Favorite Artists (comma-separated)</label>
-                                    <input type="text" id="favoriteArtists" value={favoriteArtists} onChange={(e) => setFavoriteArtists(e.target.value)} className="w-full bg-gray-800 text-white px-3 py-2 rounded focus:outline-none" required />
-                                </div>
-                                <button type="submit" className="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-600 w-full">Finish</button>
-                            </>
-                        )}
-                    </form>
+                    {step === 3 && (
+                        <div>
+                            <div className="mb-6">
+                                <label htmlFor="favoriteArtists" className="block text-gray-300 mb-2">Favorite Artists (Comma Separated)</label>
+                                <input type="text" id="favoriteArtists" value={favoriteArtists} onChange={(e) => setFavoriteArtists(e.target.value)} className="w-full bg-gray-800 text-white px-3 py-2 rounded focus:outline-none" required />
+                            </div>
+                            <button type="button" onClick={finishRegistration} className="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-600 w-full">Finish</button>
+                        </div>
+                    )}
                 </div>
             </div>
-        </div >
+        </div>
     );
 };
 
 export default RegistrationPage;
+
 
