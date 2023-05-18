@@ -64,6 +64,9 @@ const ProfilePage: React.FC = () => {
 
         if (response.ok) {
             const newPlaylist = await response.json();
+            if (!newPlaylist.SongCards) {
+                newPlaylist.SongCards = [];
+            }
             setPlaylists(prevPlaylists => [...prevPlaylists, newPlaylist]);
         } else {
             console.error('Error creating new playlist:', response.statusText);
@@ -200,20 +203,22 @@ const ProfilePage: React.FC = () => {
                             <button onClick={() => setIsNewPlaylistModalOpen(true)} className="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-600 w-full">Create New Playlist</button>
 
                             {playlists && playlists.length > 0 ? (
-                                <table className="table-auto bg-white text-black w-full mt-4">
+                                <table className="table-auto bg-gray-800 text-white w-full mt-4">
                                     <thead>
                                         <tr>
-                                            <th className="px-4 py-2">ID</th>
-                                            <th className="px-4 py-2">Name</th>
-                                            <th className="px-4 py-2">Songs</th>
+                                            <th className="px-4 py-2 text-center">Name</th>
+                                            <th className="px-4 py-2 text-center">Songs</th>
+                                            <th className="px-4 py-2 text-center"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {playlists.map((playlist, index) => (
-                                            <tr key={index} className={index % 2 === 0 ? 'bg-gray-200' : ''}>
-                                                <td className="border px-4 py-2">{playlist.id}</td>
-                                                <td className="border px-4 py-2">{playlist.name}</td>
-                                                <td className="border px-4 py-2">{playlist.SongCards ? playlist.SongCards.length : 0}</td>
+                                            <tr key={index} className="hover:bg-gray-600 group">
+                                                <td className="px-4 py-2 text-center">{playlist.name}</td>
+                                                <td className="px-4 py-2 text-center">{playlist.SongCards.length}</td>
+                                                <td className="px-4 py-2 text-center">
+                                                    <button className="text-white bg-red-500 px-2 py-1 rounded transition duration-200 ease-in-out hover:bg-red-600 opacity-0 group-hover:opacity-100">Delete</button>
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -221,6 +226,8 @@ const ProfilePage: React.FC = () => {
                             ) : (
                                 <p className="text-white mt-4">No playlists yet</p>
                             )}
+
+
 
 
                         </div>
