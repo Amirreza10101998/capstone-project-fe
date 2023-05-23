@@ -30,6 +30,29 @@ export interface FetchedSongData {
     spotify_id: string;
 }
 
+interface User {
+    id: string;
+    username: string;
+    avatar: string | null;
+}
+
+interface SongCard {
+    // Define the properties of a SongCard object here
+}
+
+interface Playlist {
+    id: string;
+    user_id: string;
+    name: string;
+    description: string | null;
+    SongCardId: string | null;
+    createdAt: string;
+    updatedAt: string;
+    User: User;
+    SongCards: SongCard[];
+}
+
+
 type TinderCardApi = {
     swipe: (dir: 'left' | 'right') => void;
     restoreCard: () => void;
@@ -37,7 +60,7 @@ type TinderCardApi = {
 
 const SPOTIFY_CLIENT_ID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
 const SPOTIFY_REDIRECT_URI = process.env.REACT_APP_SPOTIFY_REDIRECT_URI;
-const REACT_APP_BE_URL = process.env.REACT_APP_BE_URL
+
 
 const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, variant = 'discovery' }) => {
     const [lastDirection, setLastDirection] = useState<string>();
@@ -58,10 +81,37 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
     const [isShareFormOpen, setIsShareFormOpen] = useState(false);
     const [shareMessage, setShareMessage] = useState('');
 
+    const [isPlaylistFormOpen, setIsPlaylistFormOpen] = useState(false);
+    const [selectedPlaylist, setSelectedPlaylist] = useState(null);
+    const [userPlaylists, setUserPlaylists] = useState<Playlist[]>([]);
+
+    const fetchPlaylists = async () => {
+        const token = localStorage.getItem('accessToken');
+        const apiUrl = process.env.REACT_APP_BE_URL;
+        const response = await fetch(`${apiUrl}/playlist`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+
+        if (response.ok) {
+            const playlists = await response.json();
+            setUserPlaylists(playlists);
+            console.log('Fetched Playlists:', playlists);
+        } else {
+            console.error('Error fetching playlists:', response.statusText);
+        }
+    };
+
+    const handleAddToPlaylist = (playlistId: any) => {
+        // your function to add a song to a playlist here
+        // After the song is added, close the playlist form
+        setIsPlaylistFormOpen(false);
+    }
+
+
     const handleShare = async (e: any) => {
         e.preventDefault();
-
-        console.log(`Sharing song "${currentSong?.title}" with message: "${shareMessage}"`);
 
         try {
             const token = accessToken
@@ -199,7 +249,14 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
                 setCurrentIndex((prevIndex) => prevIndex + 1);
             }, 1000);
         }
+        if (direction === 'right') {
+            setIsModalOpen(true);
+            if (songData) {
+                setCurrentSong(songData[currentIndex]);
+            }
+        }
     };
+
 
     const swipe = (dir: 'left' | 'right') => {
         if (childRef?.current) {
@@ -381,6 +438,30 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
                                                     <button type="submit" className="px-4 py-2 mt-2 text-sm text-white bg-blue-500 hover:bg-blue-700 rounded">Post</button>
                                                 </form>
                                             </>
+                                        ) : isPlaylistFormOpen ? (
+                                            <>
+                                                <div className="flex justify-between items-center border-b border-gray-700 p-6">
+                                                    <button onClick={() => setIsPlaylistFormOpen(false)} className="ml-3 bg-transparent border-none">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="h-6 w-6 text-gray-300 hover:text-white">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                                        </svg>
+                                                    </button>
+                                                    <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-white">
+                                                        Select a Playlist
+                                                    </Dialog.Title>
+                                                </div>
+                                                <div className="px-6 py-4 bg-gray-700">
+                                                    {userPlaylists.map(playlist => (
+                                                        <button
+                                                            key={playlist.id}
+                                                            type="button"
+                                                            className="px-4 py-2 text-sm text-white bg-blue-500 hover:bg-blue-700 rounded"
+                                                            onClick={() => handleAddToPlaylist(playlist.id)}>
+                                                            {playlist.name}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </>
                                         ) : (
                                             <>
                                                 <div className="flex justify-between items-center border-b border-gray-700 p-6">
@@ -407,15 +488,23 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
                                                 </Dialog.Description>
                                                 <div className="px-6 py-4 bg-gray-700 flex justify-between">
                                                     <button type="button" className="px-4 py-2 text-sm text-white bg-blue-500 hover:bg-blue-700 rounded" onClick={() => setIsShareFormOpen(true)}>Share</button>
-                                                    <button type="button" className="px-4 py-2 text-sm text-white bg-blue-500 hover:bg-blue-700 rounded" onClick={() => { /* insert your function to add a song to playlist here */ }}>Add to Playlist</button>
+                                                    <button
+                                                        type="button"
+                                                        className="px-4 py-2 text-sm text-white bg-blue-500 hover:bg-blue-700 rounded"
+                                                        onClick={async () => {
+                                                            await fetchPlaylists();
+                                                            setIsPlaylistFormOpen(true);
+                                                        }}>
+                                                        Add to Playlist
+                                                    </button>
                                                 </div>
                                             </>
                                         )}
                                     </div>
                                 </Transition.Child>
-                            </div>
-                        </Dialog>
-                    </Transition>
+                            </div >
+                        </Dialog >
+                    </Transition >
 
 
 

@@ -88,7 +88,7 @@ const ProfilePage: React.FC = () => {
 
             if (response.ok) {
                 const playlists = await response.json();
-                setPlaylists(playlists); // <-- change this line
+                setPlaylists(playlists);
                 console.log('Fetched Playlists:', playlists);
             } else {
                 console.error('Error fetching playlists:', response.statusText);

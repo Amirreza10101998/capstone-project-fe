@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import SharedSongCard from './SharedSongCard';
-import CommentSection from './CommentSection';
 import '../styles/FollowingFeed.css'
 import { Col, Container, Row } from 'react-bootstrap';
-import UserListRecommendations from './SuggestionList';
+
 
 const REACT_APP_BE_URL = process.env.REACT_APP_BE_URL;
 
