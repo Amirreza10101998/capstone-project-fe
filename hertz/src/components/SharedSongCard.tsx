@@ -1,5 +1,6 @@
 import React from 'react';
 import { FetchedSongData } from './SongCard';
+import { HiOutlinePlus } from 'react-icons/hi'
 import '../styles/SharedSongCard.css'
 
 interface SharedSongCardProps {
@@ -31,6 +32,10 @@ const SharedSongCard: React.FC<SharedSongCardProps> = ({ username, userImage, so
             <div className="caption">
                 <p>{content}</p>
             </div>
+
+            <button className="plus-button">
+                <HiOutlinePlus />
+            </button>
         </div>
     );
 };

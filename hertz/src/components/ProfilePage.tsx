@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Dialog, Transition } from '@headlessui/react';
 
 type Playlist = {
@@ -47,6 +48,55 @@ const ProfilePage: React.FC = () => {
     const [isUpdated, setIsUpdated] = useState(false);
     const [playlistName, setPlaylistName] = useState("");
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
+    const [avatar, setAvatar] = useState<File | null>(null);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            setAvatar(e.target.files[0]);
+            uploadAvatar(e.target.files[0]);  // Call the uploadAvatar function here
+        }
+    };
+
+    const uploadAvatar = async (avatar: File) => {
+        try {
+            const token = localStorage.getItem('accessToken');  // Retrieve the authorization token
+            const apiUrl = process.env.REACT_APP_BE_URL;
+            const formData = new FormData();
+            formData.append('avatar', avatar);
+
+            const response = await fetch(`${apiUrl}/users/me/avatar`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,  // Include the token in the request headers
+                },
+                body: formData,
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Avatar uploaded:', data);
+                setProfile(prevProfile => ({ ...prevProfile, avatar: data.avatar }));
+                return true;
+            } else {
+                console.error('Error uploading avatar:', response.statusText);
+                return false;
+            }
+        } catch (error) {
+            console.error('Error uploading avatar:', error);
+            return false;
+        }
+    };
+
+
+
+
+
+    let navigate = useNavigate();
+
+    const navigateToHome = () => {
+        navigate('/home');
+    };
 
 
 
@@ -171,14 +221,53 @@ const ProfilePage: React.FC = () => {
         updateProfile(updatedProfile);
     };
 
+    const deletePlaylist = async (id: string) => {
+        const token = localStorage.getItem('accessToken');
+        const apiUrl = process.env.REACT_APP_BE_URL;
+        const response = await fetch(`${apiUrl}/playlist/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+
+        if (response.ok) {
+            console.log('Playlist deleted successfully.');
+            setPlaylists(playlists.filter(playlist => playlist.id !== id));
+        } else {
+            console.error('Error deleting playlist:', response.statusText);
+        }
+    };
+
     return (
         <>
+            <button onClick={navigateToHome} className="absolute top-0 left-0 m-4 bg-blue-500 text-white font-bold py-2 px-4 rounded">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="h-6 w-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+            </button>
             <div className="bg-black min-h-screen flex items-center">
                 <div className="container mx-auto px-4 py-12">
                     <div className="w-full md:w-1/2 mx-auto">
                         <h1 className="text-white text-4xl font-bold mb-8">
                             Your HERTZ Profile
                         </h1>
+
+                        <div className="mb-6">
+                            <div className="mb-2">
+                                {profile.avatar && (
+                                    <img
+                                        src={profile.avatar}
+                                        alt="User Avatar"
+                                        className="w-24 h-24 rounded-full object-cover"
+                                    />
+                                )}
+                            </div>
+                            <label htmlFor="avatar" className="block text-gray-300 mb-2">Avatar</label>
+                            <input type="file" id="avatar" ref={fileInputRef} onChange={handleFileChange} className="w-full bg-gray-800 text-white px-3 py-2 rounded focus:outline-none" />
+                        </div>
+
                         <div className="mb-6">
                             <label htmlFor="email" className="block text-gray-300 mb-2">Email</label>
                             <input type="email" id="email" value={profile.email} onChange={(e) => setProfile({ ...profile, email: e.target.value })} className="w-full bg-gray-800 text-white px-3 py-2 rounded focus:outline-none" />
@@ -217,7 +306,9 @@ const ProfilePage: React.FC = () => {
                                                 <td className="px-4 py-2 text-center">{playlist.name}</td>
                                                 <td className="px-4 py-2 text-center">{playlist.SongCards.length}</td>
                                                 <td className="px-4 py-2 text-center">
-                                                    <button className="text-white bg-red-500 px-2 py-1 rounded transition duration-200 ease-in-out hover:bg-red-600 opacity-0 group-hover:opacity-100">Delete</button>
+                                                    <button
+                                                        onClick={() => deletePlaylist(playlist.id)}
+                                                        className="text-white bg-red-500 px-2 py-1 rounded transition duration-200 ease-in-out hover:bg-red-600 opacity-0 group-hover:opacity-100">Delete</button>
                                                 </td>
                                             </tr>
                                         ))}

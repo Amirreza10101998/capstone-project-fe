@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import TinderCard from 'react-tinder-card';
 import { BsFillSuitHeartFill } from 'react-icons/bs';
-import { GiAnticlockwiseRotation } from 'react-icons/gi';
 import { ImCross } from 'react-icons/im';
 import { MdThumbUp, MdThumbDown, MdOutlineComment } from 'react-icons/md';
 import '../styles/SongCard.css';
@@ -103,18 +102,42 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
         }
     };
 
-    const handleAddToPlaylist = (playlistId: any) => {
-        // your function to add a song to a playlist here
-        // After the song is added, close the playlist form
-        setIsPlaylistFormOpen(false);
-    }
+    const handleAddToPlaylist = async (playlistId: any) => {
+        const token = localStorage.getItem('accessToken');
+        const apiUrl = process.env.REACT_APP_BE_URL;
+        const songCardId = currentSong?.id;  // assuming you have an id field in the currentSong object
 
+        if (!songCardId) {
+            console.error('No current song selected');
+            return;
+        }
+
+        const response = await fetch(`${apiUrl}/playlist/${playlistId}/addSong`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ songCardId }),
+        });
+
+        if (response.ok) {
+            console.log('Song added to playlist');
+
+            setIsShareFormOpen(false);
+            setIsModalOpen(false);
+            setIsPlaylistFormOpen(false)
+
+        } else {
+            console.error('Error adding song to playlist:', response.statusText);
+        }
+    }
 
     const handleShare = async (e: any) => {
         e.preventDefault();
 
         try {
-            const token = accessToken
+            const token = localStorage.getItem('accessToken');
             const apiUrl = process.env.REACT_APP_BE_URL;
             const response = await fetch(`${apiUrl}/post`, {
                 method: 'POST',
@@ -137,7 +160,6 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
             console.error('Error while sharing the song:', error);
         }
 
-        // Close the share form and reset the share message
         setIsShareFormOpen(false);
         setShareMessage('');
         setIsModalOpen(false);
@@ -145,18 +167,27 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
 
 
     useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-        console.log('Code:', code);
+        const storedAccessToken = localStorage.getItem('spotifyAccessToken');
+        if (storedAccessToken) {
+            setAccessToken(storedAccessToken);
+            setIsConnectedToSpotify(true);
+            console.log("working")
+        } else {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            console.log('Code:', code);
 
-        if (code) {
-            fetchSpotifyAccessToken(code).then(() => {
-                setIsConnectedToSpotify(true);
-            }).catch(error => {
-                console.error('Error fetching access token:', error);
-            });
+            if (code) {
+                fetchSpotifyAccessToken(code).then(() => {
+                    setIsConnectedToSpotify(true);
+                }).catch(error => {
+                    console.error('Error fetching access token:', error);
+                });
+            }
         }
     }, [window.location.search]);
+
+
 
     const redirectToSpotifyAuth = () => {
         const scopes = 'streaming user-read-email user-read-private';
@@ -179,9 +210,13 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
 
             if (response.ok) {
                 const data = await response.json();
-                setAccessToken(data.accessToken); // replace data.spotifyAccessToken with data.accessToken
-                localStorage.setItem('spotifyAccessToken', data.accessToken); // replace data.spotifyAccessToken with data.accessToken
-                console.log('Access token fetched and stored:', data.accessToken); // replace data.spotifyAccessToken with data.accessToken
+                const expirationTime = new Date().getTime() + (data.expires_in * 1000);
+
+                setAccessToken(data.accessToken);
+                localStorage.setItem('spotifyAccessToken', data.accessToken);
+                localStorage.setItem('spotifyTokenExpiration', expirationTime.toString());
+
+                console.log('Access token fetched and stored:', data.accessToken);
             } else {
                 console.error('Error fetching access token:', response.statusText);
             }
@@ -264,10 +299,6 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
         }
     };
 
-    const goBack = async () => {
-        await childRef?.current?.restoreCard();
-    };
-
     const handleHeartClick = () => {
         swipe('right');
         setHeartClicked(true);
@@ -302,9 +333,23 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
         );
     };
 
+    function useOverflowing(ref: any) {
+        const [isOverflowing, setOverflowing] = useState(false);
+
+        useEffect(() => {
+            if (ref.current) {
+                setOverflowing(ref.current.offsetWidth < ref.current.scrollWidth);
+            }
+        }, [ref]);
+
+        return isOverflowing;
+    }
 
 
-    const CardContent: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, isConnectedToSpotify, spotifyAccessToken }) => {
+    const CardContent: React.FC<SongCardProps> = ({ imageUrl, title, artist, isConnectedToSpotify }) => {
+        const titleRef = useRef(null);
+        const isTitleOverflowing = useOverflowing(titleRef);
+
         return (
             <div onClick={() => setPlaying(true)} className="card-container">
                 {renderFollowingIcons()}
@@ -315,8 +360,8 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
                         className="w-full h-100 object-cover"
                     />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-800 mt-4">{title}</h3>
-                <p className="text-gray-500">{artist}</p>
+                <h3 ref={titleRef} className={`text-2xl font-bold text-gray-800 mt-4 ${isTitleOverflowing ? 'marquee' : ''} text-center`}>{title}</h3>
+                <p className="text-gray-500 text-center">{artist}</p>
                 {!isConnectedToSpotify ? (
                     <button
                         className="connect-spotify-button"
@@ -382,12 +427,6 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
                             >
                                 <ImCross className="text-red-500" size={30} />
                             </div>
-                            <button
-                                className={`bg-gray-700 w-16 h-16 rounded-full ml-4 cursor-pointer flex items-center justify-center ${crossClicked ? 'cross-clicked' : ''}`}
-                                onClick={() => goBack()}
-                            >
-                                <GiAnticlockwiseRotation className="text-yellow-500" size={30} />
-                            </button>
                             <div
                                 className={`bg-gray-700 w-16 h-16 rounded-full ml-4 cursor-pointer flex items-center justify-center ${heartClicked ? 'heart-clicked' : ''}`}
                                 onClick={handleHeartClick}

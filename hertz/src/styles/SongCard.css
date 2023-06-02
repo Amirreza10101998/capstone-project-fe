@@ -171,3 +171,34 @@
 .rswp__active._InfoRSWP.__7cu1cx {
     display: none;
 }
+
+/*
+.ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 500px;
+}
+*/
+
+.marquee {
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.marquee:hover {
+    text-overflow: clip;
+    animation: marquee 10s linear infinite;
+}
+
+@keyframes marquee {
+    from {
+        text-indent: 0%
+    }
+
+    to {
+        text-indent: -100%
+    }
+}

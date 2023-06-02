@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/registrationPageAnimations.css'
 import { TbMicrophone2 } from 'react-icons/tb'
@@ -13,6 +13,7 @@ const RegistrationPage: React.FC = () => {
     const [step, setStep] = useState(0);
 
     const navigate = useNavigate();
+
 
     const handleNext = () => {
         setStep(step + 1);
@@ -45,8 +46,10 @@ const RegistrationPage: React.FC = () => {
 
 
     const finishRegistration = async () => {
-        const success = await registerUser(email, username, password, selectedGenres, favoriteArtists.split(','));
-        if (success) {
+
+        // Registration
+        const successRegistration = await registerUser(email, username, password, selectedGenres, favoriteArtists.split(','));
+        if (successRegistration) {
             navigate('/login');
         } else {
             console.error('Registration failed. Please try again.')
@@ -125,6 +128,7 @@ const RegistrationPage: React.FC = () => {
                             <button type="button" onClick={finishRegistration} className="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4 hover:bg-blue-600 w-full">Finish</button>
                         </div>
                     )}
+
                 </div>
             </div>
         </div>
