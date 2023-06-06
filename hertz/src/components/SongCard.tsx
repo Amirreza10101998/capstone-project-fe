@@ -454,7 +454,7 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
                                             <>
                                                 <div className="flex justify-between items-center border-b border-gray-700 p-6">
                                                     <button onClick={() => setIsShareFormOpen(false)} className="ml-3 bg-transparent border-none">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="h-6 w-6 text-gray-300 hover:text-white">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className=" mr-3 h-6 w-6 text-gray-300 hover:text-white">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                                                         </svg>
                                                     </button>
@@ -480,7 +480,7 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
                                         ) : isPlaylistFormOpen ? (
                                             <>
                                                 <div className="flex justify-between items-center border-b border-gray-700 p-6">
-                                                    <button onClick={() => setIsPlaylistFormOpen(false)} className="ml-3 bg-transparent border-none">
+                                                    <button onClick={() => setIsPlaylistFormOpen(false)} className="mr-3 bg-transparent border-none">
                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="h-6 w-6 text-gray-300 hover:text-white">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                                                         </svg>
@@ -494,7 +494,7 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
                                                         <button
                                                             key={playlist.id}
                                                             type="button"
-                                                            className="px-4 py-2 text-sm text-white bg-blue-500 hover:bg-blue-700 rounded"
+                                                            className="block w-full px-4 py-2 text-sm text-white bg-blue-500 hover:bg-blue-700 rounded mt-2"
                                                             onClick={() => handleAddToPlaylist(playlist.id)}>
                                                             {playlist.name}
                                                         </button>
