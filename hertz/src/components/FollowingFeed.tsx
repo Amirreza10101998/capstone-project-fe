@@ -53,6 +53,7 @@ const FollowingFeed: React.FC = () => {
                 if (response.ok) {
                     const data = await response.json();
                     setPosts(data);
+                    console.log(data)
                 } else {
                     console.error('Error while fetching posts:', response.statusText);
                 }

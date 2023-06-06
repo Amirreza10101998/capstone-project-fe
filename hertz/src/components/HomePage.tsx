@@ -21,7 +21,7 @@ const HomePage: React.FC = () => {
         <div className="bg-black min-h-screen card-wrapper">
             <LoggedInNavbar activeTab={activeTab} setActiveTab={setActiveTab} />
             <Container fluid className="min-h-screen pt-16">
-                <Row className="justify-content-center align-items-center min-h-screen">
+                <Row className="justify-content-center align-items-center ">
                     <Col xs={12} md={6} lg={3}>
                         <CSSTransition
                             in={activeTab === 'discovery'}

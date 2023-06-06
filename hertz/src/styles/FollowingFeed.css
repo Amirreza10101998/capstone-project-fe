@@ -6,7 +6,6 @@
     scroll-snap-points-y: repeat(100%);
     max-height: calc(100vh - 100px);
     width: 100%;
-    margin-top: 50px;
 }
 
 .following-feed::-webkit-scrollbar {
@@ -22,11 +21,9 @@
     scroll-snap-align: start;
     flex-shrink: 0;
     height: calc(100vh - 190px);
-    margin-bottom: 50px;
 }
 
 .following-feed-row {
     display: flex;
     justify-content: space-around;
-    margin-bottom: 90px;
 }

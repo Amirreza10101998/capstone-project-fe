@@ -8,10 +8,24 @@ interface LoggedInNavbarProps {
 
 const LoggedInNavbar: React.FC<LoggedInNavbarProps> = ({ activeTab, setActiveTab }) => {
 
-
     const handleSignOut = () => {
-        // Handle sign out logic here
-        console.log('Signed out');
+        const token = localStorage.getItem('accessToken');
+        const apiUrl = process.env.REACT_APP_BE_URL as String;
+        fetch(`${apiUrl}/users/session`, {
+            method: "DELETE",
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        })
+            .then((response) => {
+                if (response.ok) {
+                } else {
+                    console.error("Error signing out");
+                }
+            })
+            .catch((error) => {
+                console.error("Error signing out:", error);
+            });
     };
 
     const handleTabClick = (tab: string) => {
@@ -73,3 +87,4 @@ const LoggedInNavbar: React.FC<LoggedInNavbarProps> = ({ activeTab, setActiveTab
 };
 
 export default LoggedInNavbar;
+//how is my code?

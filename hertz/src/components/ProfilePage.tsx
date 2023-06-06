@@ -88,17 +88,11 @@ const ProfilePage: React.FC = () => {
         }
     };
 
-
-
-
-
     let navigate = useNavigate();
 
     const navigateToHome = () => {
         navigate('/home');
     };
-
-
 
     const createNewPlaylist = async (name: string) => {
         const token = localStorage.getItem('accessToken');
@@ -122,9 +116,6 @@ const ProfilePage: React.FC = () => {
             console.error('Error creating new playlist:', response.statusText);
         }
     };
-
-
-
 
     useEffect(() => {
         const fetchPlaylists = async () => {
@@ -258,7 +249,7 @@ const ProfilePage: React.FC = () => {
                             <div className="mb-2">
                                 {profile.avatar && (
                                     <img
-                                        src={profile.avatar}
+                                        src={`https://res.cloudinary.com/dpbp2fwoi/image/upload/v1606940285/${profile.avatar}`}
                                         alt="User Avatar"
                                         className="w-24 h-24 rounded-full object-cover"
                                     />
@@ -353,12 +344,13 @@ const ProfilePage: React.FC = () => {
                                 <form onSubmit={(e) => {
                                     e.preventDefault();
                                     createNewPlaylist(playlistName);
+                                    setPlaylistName('');
                                     setIsNewPlaylistModalOpen(false);
                                 }} className="px-6 py-4 bg-gray-700">
                                     <input
                                         value={playlistName}
                                         onChange={(e) => setPlaylistName(e.target.value)}
-                                        className="w-full px-3 py-2 text-sm text-gray-700 bg-gray-800 rounded"
+                                        className="w-full px-3 py-2 text-sm text-gray-300 bg-gray-800 rounded"
                                         placeholder="Enter playlist name..."
                                         required
                                     />

@@ -470,7 +470,7 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
                                                     <textarea
                                                         value={shareMessage}
                                                         onChange={(e) => setShareMessage(e.target.value)}
-                                                        className="w-full px-3 py-2 text-sm text-gray-700 bg-gray-800 rounded"
+                                                        className="w-full px-3 py-2 text-sm  text-gray-300 bg-gray-800 rounded"
                                                         placeholder="Write a caption..."
                                                         required
                                                     />

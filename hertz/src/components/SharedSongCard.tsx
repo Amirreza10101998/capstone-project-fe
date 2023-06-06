@@ -15,8 +15,8 @@ const SharedSongCard: React.FC<SharedSongCardProps> = ({ username, userImage, so
     return (
         <div className="shared-song-card">
             <div className="user-details">
-                <span className="shared-by">Shared by</span>
-                <img src={userImage || '/default-avatar.png'} alt={username} />
+                <span className="shared-by">Shared by:</span>
+                <img className='ml-2' src={userImage ? `https://res.cloudinary.com/dpbp2fwoi/image/upload/${userImage}` : '/default-avatar.png'} alt={username} />
                 <span>{username}</span>
             </div>
 
