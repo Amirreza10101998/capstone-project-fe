@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 interface LoggedInNavbarProps {
@@ -19,6 +19,8 @@ const LoggedInNavbar: React.FC<LoggedInNavbarProps> = ({ activeTab, setActiveTab
         })
             .then((response) => {
                 if (response.ok) {
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('spotifyAccessToken');
                 } else {
                     console.error("Error signing out");
                 }
@@ -42,9 +44,11 @@ const LoggedInNavbar: React.FC<LoggedInNavbarProps> = ({ activeTab, setActiveTab
                                 HERTZ
                             </a>
                         </div>
-                        <button className="bg-gray-800 text-white font-bold py-2 px-4 rounded mr-4 hover:bg-gray-700">
-                            <a href="/profile">Profile</a>
-                        </button>
+                        <Link to={"/profile"}>
+                            <button className="bg-gray-800 text-white font-bold py-2 px-4 rounded mr-4 hover:bg-gray-700">
+                                <a>Profile</a>
+                            </button>
+                        </Link>
                     </div>
                     <div className="relative">
                         <button
@@ -87,4 +91,4 @@ const LoggedInNavbar: React.FC<LoggedInNavbarProps> = ({ activeTab, setActiveTab
 };
 
 export default LoggedInNavbar;
-//how is my code?
+

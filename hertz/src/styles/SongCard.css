@@ -45,7 +45,6 @@
 }
 
 .card-container:hover {
-    box-shadow: 0 0 1px 1px rgb(0, 159, 255);
     cursor: pointer;
 }
 
@@ -142,7 +141,12 @@
     display: block;
 }
 
+
 .rswp__active._InfoRSWP.__107yxqe {
+    display: none;
+}
+
+.rswp__active._InfoRSWP.__1m4nls5 {
     display: none;
 }
 
@@ -172,14 +176,12 @@
     display: none;
 }
 
-/*
 .ellipsis {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 500px;
 }
-*/
 
 .marquee {
     width: 100%;

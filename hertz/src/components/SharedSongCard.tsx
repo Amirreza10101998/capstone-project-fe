@@ -27,13 +27,14 @@ const SharedSongCard: React.FC<SharedSongCardProps> = ({ username, userImage, so
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isPlaylistFormOpen, setIsPlaylistFormOpen] = useState(false);
     const [userPlaylists, setUserPlaylists] = useState<Playlist[]>([]);
+    const accessToken = localStorage.getItem('accessToken') || '';
+
 
     const fetchPlaylists = async () => {
-        const token = localStorage.getItem('accessToken');
         const apiUrl = process.env.REACT_APP_BE_URL;
         const response = await fetch(`${apiUrl}/playlist`, {
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${accessToken}`,
             },
         });
 
@@ -47,9 +48,8 @@ const SharedSongCard: React.FC<SharedSongCardProps> = ({ username, userImage, so
     };
 
     const handleAddToPlaylist = async (playlistId: any) => {
-        const token = localStorage.getItem('accessToken');
         const apiUrl = process.env.REACT_APP_BE_URL;
-        const songCardId = songData.id;  // changed currentSong to songData
+        const songCardId = songData.id;
 
         if (!songCardId) {
             console.error('No current song selected');
@@ -59,7 +59,7 @@ const SharedSongCard: React.FC<SharedSongCardProps> = ({ username, userImage, so
         const response = await fetch(`${apiUrl}/playlist/${playlistId}/addSong`, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ songCardId }),
@@ -74,6 +74,7 @@ const SharedSongCard: React.FC<SharedSongCardProps> = ({ username, userImage, so
             console.error('Error adding song to playlist:', response.statusText);
         }
     }
+
 
     const handleButtonClick = () => {
         fetchPlaylists();
@@ -103,7 +104,7 @@ const SharedSongCard: React.FC<SharedSongCardProps> = ({ username, userImage, so
             </div>
 
             <button className="plus-button" onClick={handleButtonClick}>
-                <HiOutlinePlus />
+                <HiOutlinePlus style={{ color: "#3B81F6" }} />
             </button>
 
             <Transition show={isModalOpen} as={React.Fragment}>

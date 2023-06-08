@@ -377,10 +377,10 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
                         syncExternalDevice={true}
                         styles={{
                             activeColor: '#1db954',
-                            bgColor: '#282828',
-                            color: '#fff',
-                            loaderColor: '#1db954',
-                            sliderColor: '#1db954',
+                            bgColor: '#FFFFFF',
+                            color: '#000000',
+                            loaderColor: '#3B81F6',
+                            sliderColor: '#3B81F6',
                             trackArtistColor: '#ccc',
                             trackNameColor: '#fff',
                         }}
