@@ -50,6 +50,15 @@ const ProfilePage: React.FC = () => {
     const [playlists, setPlaylists] = useState<Playlist[]>([]);
     const [avatar, setAvatar] = useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null);
+    const [isSongListModalOpen, setIsSongListModalOpen] = useState(false);
+
+
+    const handlePlaylistClick = (playlist: Playlist) => {
+        setSelectedPlaylist(playlist);
+        setIsSongListModalOpen(true);
+    };
+
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -294,7 +303,11 @@ const ProfilePage: React.FC = () => {
                                     <tbody>
                                         {playlists.map((playlist, index) => (
                                             <tr key={index} className="hover:bg-gray-600 group">
-                                                <td className="px-4 py-2 text-center">{playlist.name}</td>
+                                                <td className="px-4 py-2 text-center">
+                                                    <button onClick={() => handlePlaylistClick(playlist)}>
+                                                        {playlist.name}
+                                                    </button>
+                                                </td>
                                                 <td className="px-4 py-2 text-center">{playlist.SongCards.length}</td>
                                                 <td className="px-4 py-2 text-center">
                                                     <button
@@ -308,14 +321,92 @@ const ProfilePage: React.FC = () => {
                             ) : (
                                 <p className="text-white mt-4">No playlists yet</p>
                             )}
-
-
-
-
                         </div>
                     </div>
                 </div>
             </div>
+
+            <Transition show={isSongListModalOpen} as={React.Fragment}>
+                <Dialog
+                    open={isSongListModalOpen}
+                    onClose={() => setIsSongListModalOpen(false)}
+                    className="fixed z-10 inset-0 overflow-y-auto"
+                    aria-labelledby="modal-title"
+                >
+                    <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:p-0">
+                        <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-75 transition-opacity" />
+                        <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                        <Transition.Child
+                            enter="transition-opacity duration-500 ease-in-out"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="transition-opacity duration-500 ease-in-out"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                        >
+                            <div className="inline-block bg-gray-800 text-white rounded-lg text-left overflow-hidden shadow-xl transform transition-opacity sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full">
+                                <div className="flex justify-between items-center border-b border-gray-700 p-6">
+                                    <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-white">
+                                        Playlist: {selectedPlaylist?.name}
+                                    </Dialog.Title>
+                                    <button onClick={() => setIsSongListModalOpen(false)} className="ml-3 bg-transparent border-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="h-6 w-6 text-gray-300 hover:text-white">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div className="px-6 py-4 bg-gray-700">
+                                    {selectedPlaylist?.SongCards ? (
+                                        <table className="table-auto border-collapse w-full">
+                                            <thead>
+                                                <tr className="rounded-lg text-sm font-medium text-gray-300 text-left" style={{ fontSize: '0.9674rem' }}>
+                                                    <th className="px-4 py-2 bg-gray-800" ></th>
+                                                    <th className="px-4 py-2 bg-gray-800" >Title</th>
+                                                    <th className="px-4 py-2 bg-gray-800" >Album</th>
+                                                    <th className="px-4 py-2 bg-gray-800" >Date Added</th>
+                                                    <th className="px-4 py-2 bg-gray-800" ></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="text-sm font-normal text-white">
+                                                {selectedPlaylist.SongCards.map((songCard: any) => {
+                                                    const dateAdded = new Date(songCard.playlist_song_cards.createdAt);
+                                                    const now = new Date();
+                                                    const diffTime = Math.abs(now.getTime() - dateAdded.getTime());
+                                                    const diffHours = Math.ceil(diffTime / (1000 * 60 * 60));
+                                                    const formattedDate = dateAdded.toLocaleDateString();
+
+                                                    return (
+                                                        <tr key={songCard.id} className="hover:bg-gray-800 rounded-lg">
+                                                            <td className="px-4 py-4">
+                                                                <img src={songCard.album_art} alt={songCard.album_title} width="100px" height="100px" />
+                                                            </td>
+                                                            <td className="px-4 py-4">{songCard.song_title}</td>
+                                                            <td className="px-4 py-4">{songCard.album_title}</td>
+                                                            <td className="px-4 py-4">{`${formattedDate}`}</td>
+                                                            <td className="px-4 py-4">
+                                                                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                                                    <a href={songCard.song_url} target="_blank" rel="noreferrer">Listen</a>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })}
+                                            </tbody>
+                                        </table>
+                                    ) : (
+                                        <p>Loading...</p>
+                                    )}
+                                </div>
+
+
+
+                            </div>
+                        </Transition.Child>
+                    </div>
+                </Dialog>
+            </Transition>
+
+
 
             <Transition show={isNewPlaylistModalOpen} as={React.Fragment}>
                 <Dialog open={isNewPlaylistModalOpen} onClose={() => setIsNewPlaylistModalOpen(false)} className="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title">
