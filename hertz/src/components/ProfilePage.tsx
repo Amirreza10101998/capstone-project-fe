@@ -372,7 +372,6 @@ const ProfilePage: React.FC = () => {
                                                     const dateAdded = new Date(songCard.playlist_song_cards.createdAt);
                                                     const now = new Date();
                                                     const diffTime = Math.abs(now.getTime() - dateAdded.getTime());
-                                                    const diffHours = Math.ceil(diffTime / (1000 * 60 * 60));
                                                     const formattedDate = dateAdded.toLocaleDateString();
 
                                                     return (
