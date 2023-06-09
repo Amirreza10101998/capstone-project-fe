@@ -30,6 +30,11 @@ type ProfileState = {
     googleId: null | string;
 };
 
+type FollowState = {
+    id: string;
+    username: string;
+    avatar: null | string;
+};
 
 
 const ProfilePage: React.FC = () => {
@@ -52,6 +57,41 @@ const ProfilePage: React.FC = () => {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null);
     const [isSongListModalOpen, setIsSongListModalOpen] = useState(false);
+    const [followers, setFollowers] = useState<FollowState[]>([]);
+    const [followings, setFollowings] = useState<FollowState[]>([]);
+
+    useEffect(() => {
+        // Only run the effect if profile.id is not an empty string
+        if (profile.id !== '') {
+            const fetchFollowData = async () => {
+                const token = localStorage.getItem('accessToken');
+                const apiUrl = process.env.REACT_APP_BE_URL;
+
+                const followersResponse = await fetch(`${apiUrl}/api/${profile.id}/followers`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+
+                const followingsResponse = await fetch(`${apiUrl}/api/${profile.id}/following`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+
+                if (followersResponse.ok && followingsResponse.ok) {
+                    const followersData = await followersResponse.json();
+                    const followingsData = await followingsResponse.json();
+                    setFollowers(followersData);
+                    setFollowings(followingsData);
+                } else {
+                    console.error('Error fetching follow data:', followersResponse.statusText, followingsResponse.statusText);
+                }
+            };
+
+            fetchFollowData();
+        }
+    }, [profile.id]);
 
 
     const handlePlaylistClick = (playlist: Playlist) => {
@@ -254,7 +294,7 @@ const ProfilePage: React.FC = () => {
                             Your HERTZ Profile
                         </h1>
 
-                        <div className="mb-6">
+                        <div className="mb-6 flex">
                             <div className="mb-2">
                                 {profile.avatar && (
                                     <img
@@ -264,6 +304,26 @@ const ProfilePage: React.FC = () => {
                                     />
                                 )}
                             </div>
+                            <div className="ml-10 pl-10">
+                                <div className="flex justify-between text-white text-xl font-bold mb-4" style={{ width: "300px" }}>
+                                    <div className="flex flex-col justify-between text-center p-5">
+                                        <p>Posts</p>
+                                        {/* Replace the number below with your posts count */}
+                                        <p>0</p>
+                                    </div>
+                                    <div className="flex flex-col justify-between text-center p-5">
+                                        <p>Followers</p>
+                                        <p>{followers ? followers.length : 0}</p>
+                                    </div>
+                                    <div className="flex flex-col justify-between text-center p-5">
+                                        <p>Following</p>
+                                        <p>{followings ? followings.length : 0}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mb-6">
                             <label htmlFor="avatar" className="block text-gray-300 mb-2">Avatar</label>
                             <input type="file" id="avatar" ref={fileInputRef} onChange={handleFileChange} className="w-full bg-gray-800 text-white px-3 py-2 rounded focus:outline-none" />
                         </div>
