@@ -110,7 +110,7 @@ const ProfilePage: React.FC = () => {
 
     const uploadAvatar = async (avatar: File) => {
         try {
-            const token = localStorage.getItem('accessToken');  // Retrieve the authorization token
+            const token = localStorage.getItem('accessToken');
             const apiUrl = process.env.REACT_APP_BE_URL;
             const formData = new FormData();
             formData.append('avatar', avatar);
@@ -118,7 +118,7 @@ const ProfilePage: React.FC = () => {
             const response = await fetch(`${apiUrl}/users/me/avatar`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${token}`,  // Include the token in the request headers
+                    'Authorization': `Bearer ${token}`,
                 },
                 body: formData,
             });
@@ -306,7 +306,7 @@ const ProfilePage: React.FC = () => {
                                     />
                                 )}
                             </div>
-                            <div className="ml-10 pl-10">
+                            <div className="pl-10">
                                 <div className="flex justify-between text-white text-xl font-bold mb-4" style={{ width: "300px" }}>
                                     <div className="flex flex-col justify-between text-center p-5">
                                         <p>Posts</p>
@@ -319,6 +319,10 @@ const ProfilePage: React.FC = () => {
                                     <div className="flex flex-col justify-between text-center p-5">
                                         <p>Following</p>
                                         <p>{followings ? followings.length : 0}</p>
+                                    </div>
+                                    <div className="flex flex-col justify-between text-center p-5">
+                                        <p>Playlists</p>
+                                        <p>{playlists ? playlists.length : 0}</p>
                                     </div>
                                 </div>
                             </div>
