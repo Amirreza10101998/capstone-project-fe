@@ -97,6 +97,9 @@ const SharedSongCard: React.FC<SharedSongCardProps> = ({ username, userImage, so
             <div className="song-details">
                 <h3>{songData.song_title}</h3>
                 <p>{songData.artist}</p>
+                <a href={songData.song_url} target="_blank" rel="noopener noreferrer" className="spotify-button">
+                    Listen on Spotify
+                </a>
             </div>
 
             <div className="caption">

@@ -90,3 +90,18 @@
     transform: scale(1.2);
     /* Scales the button to 120% of its original size on hover */
 }
+
+.spotify-button {
+    right: 10px;
+    bottom: 70px;
+    position: absolute;
+    display: inline-block;
+    background-color: #1DB954;
+    /* Spotify green */
+    color: white;
+    padding: 10px 20px;
+    margin-top: 10px;
+    text-decoration: none;
+    border-radius: 20px;
+    font-weight: bold;
+}

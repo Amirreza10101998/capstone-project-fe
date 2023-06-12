@@ -28,6 +28,7 @@ type ProfileState = {
     favorite_artists: string[];
     refreshToken: string;
     googleId: null | string;
+    postCount: number;
 };
 
 type FollowState = {
@@ -46,7 +47,8 @@ const ProfilePage: React.FC = () => {
         favorite_genres: [],
         favorite_artists: [],
         refreshToken: '',
-        googleId: null
+        googleId: null,
+        postCount: 0,
     });
 
     const [isNewPlaylistModalOpen, setIsNewPlaylistModalOpen] = useState(false);
@@ -61,7 +63,6 @@ const ProfilePage: React.FC = () => {
     const [followings, setFollowings] = useState<FollowState[]>([]);
 
     useEffect(() => {
-        // Only run the effect if profile.id is not an empty string
         if (profile.id !== '') {
             const fetchFollowData = async () => {
                 const token = localStorage.getItem('accessToken');
@@ -208,6 +209,7 @@ const ProfilePage: React.FC = () => {
                         ...data,
                         favorite_genres: data.favorite_genres,
                         favorite_artists: data.favorite_artists,
+                        postCount: data.postCount
                     });
                 } else {
                     console.error('Error fetching user profile:', response.statusText);
@@ -308,8 +310,7 @@ const ProfilePage: React.FC = () => {
                                 <div className="flex justify-between text-white text-xl font-bold mb-4" style={{ width: "300px" }}>
                                     <div className="flex flex-col justify-between text-center p-5">
                                         <p>Posts</p>
-                                        {/* Replace the number below with your posts count */}
-                                        <p>0</p>
+                                        <p>{profile.postCount}</p>
                                     </div>
                                     <div className="flex flex-col justify-between text-center p-5">
                                         <p>Followers</p>
