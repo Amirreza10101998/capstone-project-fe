@@ -10,9 +10,6 @@
     position: relative;
 }
 
-.shared-song-card:hover {
-    cursor: pointer;
-}
 
 .image-container {
     width: 100%;
@@ -34,6 +31,10 @@
     display: flex;
     align-items: center;
     margin-bottom: 10px;
+}
+
+.user-details:hover {
+    cursor: pointer;
 }
 
 .user-details img {
@@ -87,8 +88,7 @@
 }
 
 .plus-button:hover {
-    transform: scale(1.2);
-    /* Scales the button to 120% of its original size on hover */
+    transform: scale(1.12);
 }
 
 .spotify-button {
@@ -104,4 +104,16 @@
     text-decoration: none;
     border-radius: 20px;
     font-weight: bold;
+    transition: transform 0.3s ease-in-out;
+}
+
+.spotify-button:hover {
+    transform: scale(1.05);
+}
+
+.song-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
 }
