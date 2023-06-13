@@ -351,7 +351,7 @@ const SongCard: React.FC<SongCardProps> = ({ imageUrl, title, artist, audioUrl, 
         const isTitleOverflowing = useOverflowing(titleRef);
 
         return (
-            <div onClick={() => setPlaying(true)} className="card-container">
+            <div onClick={() => setPlaying(true)} className="card-container noHighlight">
                 {renderFollowingIcons()}
                 <div className="image-container">
                     <img

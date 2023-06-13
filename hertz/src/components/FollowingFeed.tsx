@@ -52,8 +52,8 @@ const FollowingFeed: React.FC = () => {
 
                 if (response.ok) {
                     const data = await response.json();
+                    data.sort((a: Post, b: Post) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
                     setPosts(data);
-                    console.log(data)
                 } else {
                     console.error('Error while fetching posts:', response.statusText);
                 }

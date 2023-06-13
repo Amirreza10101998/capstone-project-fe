@@ -204,3 +204,14 @@
         text-indent: -100%
     }
 }
+
+.noHighlight {
+    user-select: none;
+    /* Standard Syntax */
+    -webkit-user-select: none;
+    /* Chrome, Safari, and Opera Syntax */
+    -moz-user-select: none;
+    /* Firefox Syntax */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge Syntax */
+}

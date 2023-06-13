@@ -209,7 +209,6 @@ const ProfilePage: React.FC = () => {
                         ...data,
                         favorite_genres: data.favorite_genres,
                         favorite_artists: data.favorite_artists,
-                        postCount: data.postCount
                     });
                 } else {
                     console.error('Error fetching user profile:', response.statusText);
@@ -240,6 +239,7 @@ const ProfilePage: React.FC = () => {
                 const data = await response.json();
                 setProfile({
                     ...data,
+                    postCount: data.postCount,
                     favorite_genres: data.favorite_genres,
                     favorite_artists: data.favorite_artists,
                 });
@@ -310,7 +310,7 @@ const ProfilePage: React.FC = () => {
                                 <div className="flex justify-between text-white text-xl font-bold mb-4" style={{ width: "300px" }}>
                                     <div className="flex flex-col justify-between text-center p-5">
                                         <p>Posts</p>
-                                        <p>{profile.postCount}</p>
+                                        <p>{profile ? profile.postCount : 0}</p>
                                     </div>
                                     <div className="flex flex-col justify-between text-center p-5">
                                         <p>Followers</p>
