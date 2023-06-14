@@ -308,10 +308,7 @@ const ProfilePage: React.FC = () => {
                             </div>
                             <div className="pl-10">
                                 <div className="flex justify-between text-white text-xl font-bold mb-4" style={{ width: "300px" }}>
-                                    <div className="flex flex-col justify-between text-center p-5">
-                                        <p>Posts</p>
-                                        <p>{profile ? profile.postCount : 0}</p>
-                                    </div>
+
                                     <div className="flex flex-col justify-between text-center p-5">
                                         <p>Followers</p>
                                         <p>{followers ? followers.length : 0}</p>

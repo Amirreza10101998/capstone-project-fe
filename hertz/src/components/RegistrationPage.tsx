@@ -105,11 +105,6 @@ const RegistrationPage: React.FC = () => {
                                             className={`border-t border-gray-700 cursor-pointer hover:bg-gray-700 ${selectedGenres.includes(genre) ? 'bg-blue-500' : ''}`}
                                             onClick={() => handleGenreSelection(genre)}
                                         >
-                                            <td className="px-4 py-2">
-                                                <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center">
-                                                    <span className="text-xs text-white"><TbMicrophone2 /></span>
-                                                </div>
-                                            </td>
                                             <td className="px-4 py-2">{genre}</td>
                                         </tr>
                                     ))}
